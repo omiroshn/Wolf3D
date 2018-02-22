@@ -21,6 +21,7 @@
 # include <time.h> 
 # include "libft.h"
 # include <SDL2/SDL.h>
+# include <errno.h>
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 
@@ -81,16 +82,20 @@ typedef	struct	s_map
 	t_vec		camera;
 	double		wall;
 	t_ivec		tex;
+	int			move;
+	int			rotate;
+	double		mov_speed;
+	double		rot_speed;
 }				t_map;
 
-typedef struct	s_thread
+typedef struct	s_wolf
 {
 	t_map		map;
 	int			start;
 	int			end;
-}				t_thread;
+}				t_wolf;
 
-void	draw(t_thread *t);
+void	draw(t_wolf *w);
 void	threads_create(SDL_Surface *screen, t_map map);
 int		key_function(t_map *map);
 void	draw_camera(t_map *m, int x);
@@ -98,5 +103,7 @@ void	perform_dda(t_map *m);
 void	draw_wall(t_map *m, int x);
 void	draw_floor(t_map *m);
 void	draw_cursor(t_map *m);
+void	scan_ws(t_map *map, double alpha);
+void	scan_ad(t_map *map, double alpha);
 
 #endif
