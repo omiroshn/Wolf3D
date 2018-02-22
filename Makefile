@@ -12,7 +12,7 @@
 
 NAME = wolf3d
 CC = clang
-FILES = main draw
+FILES = main draw event
 LIBFT_DIR = libft/
 SRC = $(addprefix src/, $(addsuffix .c, $(FILES)))
 OBJ = $(addprefix obj/, $(addsuffix .o, $(FILES)))

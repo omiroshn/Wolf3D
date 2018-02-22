@@ -40,48 +40,51 @@ typedef struct	s_font
 	TTF_Font	*ttf;
 }				t_font;
 
-typedef	struct	s_fps
-{
-	double	time;
-	double	old_time;
-	double	frame_time;
-}				t_fps;
-
 typedef	struct	s_vec
 {
-	float	x;
-	float	y;
-	float	a;
+	double	x;
+	double	y;
 }				t_vec;
 
 typedef	struct	s_ivec
 {
 	int		x;
 	int		y;
-	int		a;
 }				t_ivec;
 
 typedef	struct	s_map
 {
 	SDL_Surface	*screen;
 	SDL_Window	*window;
-	
+	SDL_Surface	*w_t[16];
+
 	int			pixels;
 	int			cunt;
 	int			end;
 	double		wall_dist;
 	int			*image;
+	unsigned int *bufp;
 	t_vec		pos;
 	t_vec		dir;
 	t_vec		plane;
-	t_fps		fps;
 	t_vec		ray_dir;
-	SDL_Surface	*w_t[16];
+	double		dist_wall;
+	double		dist_player;
+	double		current_dist;
+	int			draw_start;
+	int			draw_end;
+	int			side;
+	t_ivec		map;
+	t_ivec		step;
+	t_vec		side_dist;
+	t_vec		delta_dist;
+	t_vec		camera;
+	double		wall;
+	t_ivec		tex;
 }				t_map;
 
 typedef struct	s_thread
 {
-	SDL_Surface *screen;
 	t_map		map;
 	int			start;
 	int			end;
@@ -89,6 +92,11 @@ typedef struct	s_thread
 
 void	draw(t_thread *t);
 void	threads_create(SDL_Surface *screen, t_map map);
-// int		vert_line(t_map *map, int x, int draw_start, int draw_end, int color, int texture, int side);
+int		key_function(t_map *map);
+void	draw_camera(t_map *m, int x);
+void	perform_dda(t_map *m);
+void	draw_wall(t_map *m, int x);
+void	draw_floor(t_map *m);
+void	draw_cursor(t_map *m);
 
 #endif
