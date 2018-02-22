@@ -63,13 +63,14 @@ typedef	struct	s_ivec
 
 typedef	struct	s_map
 {
-	SDL_Surface *screen;
+	SDL_Surface	*screen;
+	SDL_Window	*window;
 	
 	int			pixels;
-
 	int			cunt;
 	int			end;
 	double		wall_dist;
+	int			*image;
 	t_vec		pos;
 	t_vec		dir;
 	t_vec		plane;

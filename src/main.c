@@ -40,60 +40,70 @@ const int worldMap[mapWidth][mapHeight]=
   {2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,5,5,5,5,5,5,5,5,5}
 };
 
-int		exit_func(void *mlx)
+inline static void	scan_ws(SDL_Event e, SDL_Keycode key, t_map *map)
 {
-	mlx = NULL;
-	exit(0);
+	double moveSpeed = 0.3;
+
+	if (key == SDL_SCANCODE_W || key == SDL_SCANCODE_UP) //w
+	{
+		if (!worldMap[(int)(map->pos.x + map->dir.x * moveSpeed)][(int)(map->pos.y)])
+			map->pos.x += map->dir.x * moveSpeed;
+		if (!worldMap[(int)(map->pos.x)][(int)(map->pos.y + map->dir.y * moveSpeed)])
+			map->pos.y += map->dir.y * moveSpeed;
+	}
+	if (key == SDL_SCANCODE_S || key == SDL_SCANCODE_DOWN)  //s
+	{
+		if (!worldMap[(int)(map->pos.x - map->dir.x * moveSpeed)][(int)(map->pos.y)])
+			map->pos.x -= map->dir.x * moveSpeed;
+		if (!worldMap[(int)(map->pos.x)][(int)(map->pos.y - map->dir.y * moveSpeed)])
+			map->pos.y -= map->dir.y * moveSpeed;
+	}
+}
+
+inline static void	scan_ad(SDL_Event e, SDL_Keycode key, t_map *map)
+{
+	double oldDirX;
+	double oldPlaneX;
+	double rotSpeed = 0.08;
+
+	if (key == SDL_SCANCODE_A || key == SDL_SCANCODE_LEFT)  //a
+	{
+		oldDirX = map->dir.x;
+		map->dir.x = map->dir.x * cos(rotSpeed) - map->dir.y * sin(rotSpeed);
+		map->dir.y = oldDirX * sin(rotSpeed) + map->dir.y * cos(rotSpeed);
+		oldPlaneX = map->plane.x;
+		map->plane.x = map->plane.x * cos(rotSpeed) - map->plane.y * sin(rotSpeed);
+		map->plane.y = oldPlaneX * sin(rotSpeed) + map->plane.y * cos(rotSpeed);
+	}
+	if (key == SDL_SCANCODE_D || key == SDL_SCANCODE_RIGHT)  //d
+	{
+		oldDirX = map->dir.x;
+		map->dir.x = map->dir.x * cos(-rotSpeed) - map->dir.y * sin(-rotSpeed);
+		map->dir.y = oldDirX * sin(-rotSpeed) + map->dir.y * cos(-rotSpeed);
+		oldPlaneX = map->plane.x;
+		map->plane.x = map->plane.x * cos(-rotSpeed) - map->plane.y * sin(-rotSpeed);
+		map->plane.y = oldPlaneX * sin(-rotSpeed) + map->plane.y * cos(-rotSpeed);
+	}
 }
 
 int		key_function(t_map *map)
 {
 	SDL_Event e;
 
-	double moveSpeed =  0.3;
-	double rotSpeed =  0.08;
-	double oldDirX;
-	double oldPlaneX;
-
 	while(SDL_PollEvent(&e))
 	{
-		if ((e.type == SDL_QUIT) || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE))
+		if ((e.type == SDL_QUIT) || (e.type == SDL_KEYDOWN
+						&& e.key.keysym.scancode == SDL_SCANCODE_ESCAPE))
 			return (0);
-		if (e.key.keysym.sym == SDLK_w) //w
-		{
-			if (!worldMap[(int)(map->pos.x + map->dir.x * moveSpeed)][(int)(map->pos.y)])
-				map->pos.x += map->dir.x * moveSpeed;
-			if (!worldMap[(int)(map->pos.x)][(int)(map->pos.y + map->dir.y * moveSpeed)])
-				map->pos.y += map->dir.y * moveSpeed;
-		}
-		if (e.key.keysym.sym == SDLK_s)  //s
-		{
-			if (!worldMap[(int)(map->pos.x - map->dir.x * moveSpeed)][(int)(map->pos.y)])
-				map->pos.x -= map->dir.x * moveSpeed;
-			if (!worldMap[(int)(map->pos.x)][(int)(map->pos.y - map->dir.y * moveSpeed)])
-				map->pos.y -= map->dir.y * moveSpeed;
-		}
-		if (e.key.keysym.sym == SDLK_a)  //a
-		{
-			oldDirX = map->dir.x;
-			map->dir.x = map->dir.x * cos(rotSpeed) - map->dir.y * sin(rotSpeed);
-			map->dir.y = oldDirX * sin(rotSpeed) + map->dir.y * cos(rotSpeed);
-			oldPlaneX = map->plane.x;
-			map->plane.x = map->plane.x * cos(rotSpeed) - map->plane.y * sin(rotSpeed);
-			map->plane.y = oldPlaneX * sin(rotSpeed) + map->plane.y * cos(rotSpeed);
-		}
-		if (e.key.keysym.sym == SDLK_d)  //d
-		{
-			oldDirX = map->dir.x;
-			map->dir.x = map->dir.x * cos(-rotSpeed) - map->dir.y * sin(-rotSpeed);
-			map->dir.y = oldDirX * sin(-rotSpeed) + map->dir.y * cos(-rotSpeed);
-			oldPlaneX = map->plane.x;
-			map->plane.x = map->plane.x * cos(-rotSpeed) - map->plane.y * sin(-rotSpeed);
-			map->plane.y = oldPlaneX * sin(-rotSpeed) + map->plane.y * cos(-rotSpeed);
-		}
-		threads_create(map->screen, *map);
+		scan_ws(e, e.key.keysym.scancode, map);
+		scan_ad(e, e.key.keysym.scancode, map);
 	}
 	return (1);
+}
+
+void	draw_floor()
+{
+
 }
 
 void	draw(t_thread *t)
@@ -198,13 +208,68 @@ void	draw(t_thread *t)
 		bufp = (unsigned int *)t->map.screen->pixels + draw_start * t->map.screen->w + x;
 		while (y <= draw_end)
 		{
-			int d = y * 512 - HEIGHT * 256 + lineHeight * 256;
-			int texY = ((d * t->map.w_t[texture]->w / lineHeight) / 512);
+			int d = y * 2 - HEIGHT + lineHeight;
+			int texY = ((d * t->map.w_t[texture]->w / lineHeight) / 2);
 			if (texX >= 0 && texX < t->map.w_t[texture]->h && texY >= 0 && texY < t->map.w_t[texture]->w)
 				*bufp = ((unsigned int *)t->map.w_t[texture]->pixels)[t->map.w_t[texture]->h * texY + texX];
 			bufp += WIDTH;
 			y++;
 		}
+
+		t_vec floor_wall;
+		if (side == 0 && t->map.ray_dir.x > 0)
+		{
+			floor_wall.x = map.x;
+			floor_wall.y = map.y + wallX;
+		}
+		else if (side == 0 && t->map.ray_dir.x < 0)
+		{
+			floor_wall.x = map.x + 1.0;
+			floor_wall.y = map.y + wallX;
+		}
+		else if (side == 1 && t->map.ray_dir.y > 0)
+		{
+			floor_wall.x = map.x + wallX;
+			floor_wall.y = map.y;
+		}
+		else
+		{
+			floor_wall.x = map.x + wallX;
+			floor_wall.y = map.y + 1.0;
+		}
+
+		double distWall, distPlayer, currentDist;
+
+		distWall = t->map.wall_dist;
+		distPlayer = 0.0;
+
+		if (draw_end < 0)
+			draw_end = HEIGHT;
+		// draw_floor();
+		t_vec current_floor;
+		y = draw_end + 1;
+		while (y < HEIGHT)
+		{
+			currentDist = HEIGHT / (2.0 * y - HEIGHT);
+			double weight = (currentDist - distPlayer) / (distWall - distPlayer);
+			current_floor.x = weight * floor_wall.x + (1.0 - weight) * t->map.pos.x;
+			current_floor.y = weight * floor_wall.y + (1.0 - weight) * t->map.pos.y;
+			int floorTexX, floorTexY;
+			int ceilTexX, ceilTexY;
+			floorTexX = (int)(current_floor.x * t->map.w_t[9]->w) % t->map.w_t[9]->w;
+			floorTexY = (int)(current_floor.y * t->map.w_t[9]->h) % t->map.w_t[9]->h;
+			ceilTexX = (int)(current_floor.x * t->map.w_t[10]->w / 4) % t->map.w_t[10]->w;
+			ceilTexY = (int)(current_floor.y * t->map.w_t[10]->h / 4) % t->map.w_t[10]->h;
+			//floor
+			*bufp = (((unsigned int *)t->map.w_t[9]->pixels)[t->map.w_t[9]->w * floorTexY + floorTexX]);
+			bufp += WIDTH;
+			//ceiling (symmetrical!)
+			t->map.image[(HEIGHT - y) * WIDTH + x] = ((unsigned int *)t->map.w_t[10]->pixels)[t->map.w_t[10]->w * ceilTexY + ceilTexX];
+			y++;
+		}
+		// t->map.image[HEIGHT * WIDTH + x] = 0xFFFFFF;
+		// bufp[HEIGHT * WIDTH + x] = 0xFFFFFF;
+		// printf("%i\n", HEIGHT * WIDTH / 2);
 	}
 }
 
@@ -228,17 +293,93 @@ void	threads_create(SDL_Surface *screen, t_map map)
 		SDL_WaitThread(threads[i], NULL);
 }
 
-void 	init(t_map *map)
+void 	init(t_map *m)
 {
-	map->fps.time = 0;
-	map->fps.old_time = 0;
-	map->pos.x = 22;
-	map->pos.y = 12;
-	map->dir.x = -1;
-	map->dir.y = 0;
-	map->plane.x = 0;
-	map->plane.y = 0.66;
+	SDL_Init(SDL_INIT_EVERYTHING);
+	m->window = SDL_CreateWindow("Wolf3d",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
+	if (!m->window)
+		exit (1);
+	m->screen = SDL_GetWindowSurface(m->window);
+	m->image = m->screen->pixels;
+	m->fps.time = 0;
+	m->fps.old_time = 0;
+	m->pos.x = 22;
+	m->pos.y = 12;
+	m->dir.x = -1;
+	m->dir.y = 0;
+	m->plane.x = 0;
+	m->plane.y = 0.66;
 }
+
+void	load_textures(t_map *m)
+{
+	m->w_t[0] = IMG_Load("./resources/uganda.jpg");
+	m->w_t[1] = IMG_Load("./resources/akatski.jpg");
+	m->w_t[2] = IMG_Load("./resources/anime.png");
+	m->w_t[3] = IMG_Load("./resources/pain.png");
+	m->w_t[4] = IMG_Load("./resources/kakashi.png");
+	m->w_t[5] = IMG_Load("./resources/narutoramen.jpg");
+	m->w_t[6] = IMG_Load("./resources/narutopixel.png");
+	m->w_t[7] = IMG_Load("./resources/ugandaflag.png");
+	m->w_t[8] = IMG_Load("./resources/eye.png");
+	m->w_t[9] = IMG_Load("./resources/sand.jpg");
+	m->w_t[10] = IMG_Load("./resources/wood.png");
+}
+
+
+// void	fps_initial(void)
+// {
+// 	int NextTick = 0;
+// 	int FPS = 60;
+// 	interval = 1 * 1000 / FPS;
+// }
+
+// void	fps_func(void)
+// {
+// 	if (NextTick > SDL_GetTicks())
+// 		SDL_Delay(NextTick - SDL_GetTicks());
+// 	NextTick = SDL_GetTicks() + interval;
+// }
+
+void	lsync(void)
+{
+	int					delay;
+	static unsigned int	time;
+	static char			vsync = 1;
+
+	if (vsync)
+		vsync = SDL_GL_SetSwapInterval(1);
+	else
+		vsync = 0;
+	if (vsync)
+	{
+		delay = 17 - (SDL_GetTicks() - time);
+		if (delay < 0)
+			SDL_Delay(0);
+		else
+			SDL_Delay(delay);
+		time = SDL_GetTicks();
+	}
+}
+
+void	display_fps(SDL_Surface *surface)
+{
+	static unsigned int	frame_rate;
+	unsigned int		t_c;
+	static unsigned int	t_p;
+	static unsigned int	c_b;
+
+	t_c = time(NULL);
+	if (t_c - t_p && (t_p = t_c))
+	{
+		frame_rate = SDL_GetTicks() - c_b;
+		printf("%d\n", (int)(1000.0 / frame_rate));
+	}
+	c_b = SDL_GetTicks();
+}
+
 
 int main(int argc, char **argv)
 {
@@ -246,31 +387,17 @@ int main(int argc, char **argv)
 	int running = 1;
 
 	init(&map);
-	SDL_Init(SDL_INIT_EVERYTHING);
-	SDL_Window *window = SDL_CreateWindow("Wolf3d",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
-	map.screen = SDL_GetWindowSurface(window);
-	map.w_t[0] = IMG_Load("./resources/wall_1.jpg");
-	map.w_t[1] = IMG_Load("./resources/redbrick.png");
-	map.w_t[2] = IMG_Load("./resources/purplestone.png");
-	map.w_t[3] = IMG_Load("./resources/greystone.png");
-	map.w_t[4] = IMG_Load("./resources/bluestone.png");
-	map.w_t[5] = IMG_Load("./resources/mossy.png");
-	map.w_t[6] = IMG_Load("./resources/wood.png");
-	map.w_t[7] = IMG_Load("./resources/sand.jpg");
-	map.w_t[8] = IMG_Load("./resources/colorstone.png");
-	if (NULL == window)
-		exit (1);	
+	load_textures(&map);
 	while (running)
 	{
 		if (!key_function(&map))
 			return (0);
 		threads_create(map.screen, map);
-		// display_fps(map.screen);
-		SDL_UpdateWindowSurface(window);
+		display_fps(map.screen);
+		lsync();
+		SDL_UpdateWindowSurface(map.window);
 	}
-	SDL_DestroyWindow(window);
+	SDL_DestroyWindow(map.window);
 	SDL_Quit();
 	return (0);
 }
