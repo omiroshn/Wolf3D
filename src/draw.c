@@ -12,39 +12,11 @@
 
 #include "wolf3d.h"
 
-const int worldMap[mapWidth][mapHeight]=
-{
-  {8,8,8,8,8,8,8,8,8,8,8,4,4,6,4,4,6,4,6,4,4,4,6,4},
-  {8,0,0,0,0,0,0,0,0,0,8,4,0,0,0,0,0,0,0,0,0,0,0,4},
-  {8,0,3,3,0,0,0,0,0,8,8,4,0,0,0,0,0,0,0,0,0,0,0,6},
-  {8,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6},
-  {8,0,3,3,0,0,0,0,0,8,8,4,0,0,0,0,0,0,0,0,0,0,0,4},
-  {8,0,0,0,0,0,0,0,0,0,8,4,0,0,0,0,0,6,6,6,0,6,4,6},
-  {8,8,8,8,0,8,8,8,8,8,8,4,4,4,4,4,4,6,0,0,0,0,0,6},
-  {7,7,7,7,0,7,7,7,7,0,8,0,8,0,8,0,8,4,0,4,0,6,0,6},
-  {7,7,0,0,0,0,0,0,7,8,0,8,0,8,0,8,8,6,0,0,0,0,0,6},
-  {7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,6,0,0,0,0,0,4},
-  {7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,6,0,6,0,6,0,6},
-  {7,7,0,0,0,0,0,0,7,8,0,8,0,8,0,8,8,6,4,6,0,6,6,6},
-  {7,7,7,7,0,7,7,7,7,8,8,4,0,6,8,4,8,3,3,3,0,3,3,3},
-  {2,2,2,2,0,2,2,2,2,4,6,4,0,0,6,0,6,3,0,0,0,0,0,3},
-  {2,2,0,0,0,0,0,2,2,4,0,0,0,0,0,0,4,3,0,0,0,0,0,3},
-  {2,0,0,0,0,0,0,0,2,4,0,0,0,0,0,0,4,3,0,0,0,0,0,3},
-  {1,0,0,0,0,0,0,0,1,4,4,4,4,4,6,0,6,3,3,0,0,0,3,3},
-  {2,0,0,0,0,0,0,0,2,2,2,1,2,2,2,6,6,0,0,5,0,5,0,5},
-  {2,2,0,0,0,0,0,2,2,2,0,0,0,2,2,0,5,0,5,0,0,0,5,5},
-  {2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,5,0,5,0,5,0,5,0,5},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5},
-  {2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,5,0,5,0,5,0,5,0,5},
-  {2,2,0,0,0,0,0,2,2,2,0,0,0,2,2,0,5,0,5,0,0,0,5,5},
-  {2,2,2,2,1,2,2,2,2,2,2,1,2,2,2,5,5,5,5,5,5,5,5,5}
-};
-
 void	scan_ws(t_map *map, double d)
 {
-	if (!worldMap[(int)(map->pos.x + map->dir.x * (map->mov_speed * map->move))][(int)map->pos.y])
+	if (!map->karta.data[(int)(map->pos.x + map->dir.x * (map->mov_speed * map->move))][(int)map->pos.y])
 		map->pos.x += map->dir.x * d;
-	if (!worldMap[(int)map->pos.x][(int)(map->pos.y + map->dir.y * (map->mov_speed * map->move))])
+	if (!map->karta.data[(int)map->pos.x][(int)(map->pos.y + map->dir.y * (map->mov_speed * map->move))])
 		map->pos.y += map->dir.y * d;
 }
 
@@ -149,7 +121,7 @@ void	perform_dda(t_map *m)
 			m->map.y += m->step.y;
 			m->side = 1;
 		}
-		if (worldMap[m->map.x][m->map.y] > 0)
+		if (m->karta.data[m->map.x][m->map.y] > 0)
 			break ;
 	}
 }
@@ -184,7 +156,7 @@ void	draw_wall(t_map *m, int x)
 		m->wall = m->pos.x + m->wall_dist * m->ray_dir.x;
 	m->wall -= floor((m->wall));
 	//x coordinate on the texture
-	texture = worldMap[m->map.x][m->map.y] - 1;
+	texture = m->karta.data[m->map.x][m->map.y] - 1;
 	m->tex.x = (int)(m->wall * (double)(m->w_t[texture]->w));
 	if (m->side == 0 && m->ray_dir.x > 0)
 		m->tex.x = m->w_t[texture]->w - m->tex.x - 1;
@@ -244,12 +216,12 @@ void	draw_floor(t_map *m)
 		weight = (m->current_dist - m->dist_player) / (m->dist_wall - m->dist_player);
 		current_floor.x = weight * floor_wall.x + (1.0 - weight) * m->pos.x;
 		current_floor.y = weight * floor_wall.y + (1.0 - weight) * m->pos.y;
-		floorTexX = (int)(current_floor.x * m->w_t[10]->w) % m->w_t[10]->w;
-		floorTexY = (int)(current_floor.y * m->w_t[10]->h) % m->w_t[10]->h;
-		ceilTexX = (int)(current_floor.x * m->w_t[10]->w / 4) % m->w_t[10]->w;
-		ceilTexY = (int)(current_floor.y * m->w_t[10]->h / 4) % m->w_t[10]->h;
+		floorTexX = (int)(current_floor.x * m->w_t[9]->w) % m->w_t[9]->w;
+		floorTexY = (int)(current_floor.y * m->w_t[9]->h) % m->w_t[9]->h;
+		ceilTexX = (int)(current_floor.x * m->w_t[10]->w) % m->w_t[10]->w;
+		ceilTexY = (int)(current_floor.y * m->w_t[10]->h) % m->w_t[10]->h;
 		//floor
-		*m->bufp = ((unsigned int *)m->w_t[10]->pixels)[m->w_t[10]->w * floorTexY + floorTexX];
+		*m->bufp = ((unsigned int *)m->w_t[9]->pixels)[m->w_t[9]->w * floorTexY + floorTexX];
 		//ceiling (symmetrical!)
 		*(m->bufp + (HEIGHT - 2 * y) * WIDTH) = ((unsigned int *)m->w_t[10]->pixels)[m->w_t[10]->w * ceilTexY + ceilTexX];
 		m->bufp += WIDTH;

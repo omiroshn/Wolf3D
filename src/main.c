@@ -47,28 +47,6 @@ void	threads_create(SDL_Surface *screen, t_map map)
 		SDL_WaitThread(threads[i], NULL);
 }
 
-void 	init(t_map *m)
-{
-	SDL_Init(SDL_INIT_EVERYTHING);
-	m->window = SDL_CreateWindow("Wolf3d",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
-	if (!m->window)
-		exit (1);
-	m->screen = SDL_GetWindowSurface(m->window);
-	m->image = m->screen->pixels;
-	m->pos.x = 22;
-	m->pos.y = 11.5;
-	m->dir.x = -1;
-	m->dir.y = 0;
-	m->plane.x = 0;
-	m->plane.y = 0.66;
-	m->move = 0;
-	m->rotate = 0;
-	m->mov_speed = 0.08;
-	m->rot_speed = 0.05;
-}
-
 void	put_error(const char *msg)
 {
 	if (!msg)
@@ -137,12 +115,114 @@ void	display_fps(SDL_Surface *surface)
 	ticks = SDL_GetTicks();
 }
 
+void 	init(t_map *m)
+{
+	SDL_Init(SDL_INIT_EVERYTHING);
+	m->window = SDL_CreateWindow("Wolf3d",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
+	if (!m->window)
+		exit (1);
+	m->screen = SDL_GetWindowSurface(m->window);
+	m->image = m->screen->pixels;
+	m->dir.x = -1;
+	m->dir.y = 0;
+	m->plane.x = 0;
+	m->plane.y = 0.66;
+	m->move = 0;
+	m->rotate = 0;
+	m->mov_speed = 0.08;
+	m->rot_speed = 0.05;
+}
+
+int			ft_countwords(char *str, char c)
+{
+	int i;
+	int result;
+
+	i = 0;
+	result = 0;
+	while (str[i] && str[i] == c)
+		i++;
+	while (str[i])
+	{
+		while (str[i] && str[i] != c)
+			i++;
+		result++;
+		while (str[i] && str[i] == c)
+			i++;
+	}
+	return (result);
+}
+
+static void	gnl_values(t_map *m, char *filename)
+{
+	int		fd;
+	char	*lol;
+	char	**numbers;
+	int		temp;
+	int		i;
+	int		j;
+
+	lol = NULL;
+	if ((fd = open(filename, O_RDONLY)) < 0 || read(fd, NULL, 0) < 0)
+		put_error("opening file.");
+	if (get_next_line(fd, &lol) != 1 || ft_countwords(lol, ' ') != 2)
+		put_error("map invalid.");
+	numbers = ft_strsplit(lol, ' ');
+	m->karta.rows = ft_atoi(numbers[0]);
+	m->karta.cols = ft_atoi(numbers[1]);
+	if (get_next_line(fd, &lol) != 1 || ft_countwords(lol, ' ') != 2)
+		put_error("map invalid.");
+	numbers = ft_strsplit(lol, ' ');
+	m->pos.x = ft_atoi(numbers[1]) - 0.5;
+	m->pos.y = ft_atoi(numbers[0]) - 0.5;
+
+	if (m->pos.x <= 1 || m->pos.x > m->karta.rows - 1
+		|| m->pos.y <= 1 || m->pos.y > m->karta.cols - 1)
+		put_error("invalid player position.");
+	m->karta.data = ft_memalloc(sizeof(int *) * m->karta.rows);
+	i = -1;
+	while (++i < m->karta.cols)
+		m->karta.data[i] = ft_memalloc(sizeof(int) * m->karta.cols);
+	i = -1;
+	while (get_next_line(fd, &lol) > 0 && ++i < m->karta.rows && (j = -1))
+	{
+		if (ft_countwords(lol, ' ') != m->karta.cols)
+			put_error("opening file.");
+		numbers = ft_strsplit(lol, ' ');
+		while (++j < m->karta.cols)
+			ft_atoi_base(numbers[j], 10) <= TEXTURENUM && ft_atoi_base(numbers[j], 10) >= 0 ?
+			m->karta.data[i][j] = ft_atoi_base(numbers[j], 10) : put_error("map invalid.");
+		free(lol);
+	}
+	close(fd);
+	if (m->karta.data[(int)m->pos.x][(int)m->pos.y] != 0)
+		put_error("invalid player position.");
+	i = -1;
+	while (++i < m->karta.rows)
+	{
+		j = -1;
+		while (++j < m->karta.cols)
+			printf("%i ", m->karta.data[i][j]);
+		printf("\n");
+	}
+}
+
+void	read_map(t_map *m)
+{
+	static char map[] = "./resources/maps/map2.map";
+	char		*line;
+
+	gnl_values(m, map);
+}
 
 int main(int argc, char **argv)
 {
 	t_map		map;
 	static int	running = 1;
 
+	read_map(&map);
 	init(&map);
 	load_textures(&map);
 	while (running)

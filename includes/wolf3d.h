@@ -22,6 +22,7 @@
 # include "libft.h"
 # include <SDL2/SDL.h>
 # include <errno.h>
+# include <fcntl.h>
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 
@@ -30,6 +31,7 @@
 # define WIDTH 1280
 # define HEIGHT 1024
 # define THREADS 8
+# define TEXTURENUM 11
 
 typedef unsigned int	t_uint;
 
@@ -53,12 +55,20 @@ typedef	struct	s_ivec
 	int		y;
 }				t_ivec;
 
+typedef	struct	s_karta
+{
+	int		rows;
+	int		cols;
+	int		**data;
+}				t_karta;
+
 typedef	struct	s_map
 {
 	SDL_Surface	*screen;
 	SDL_Window	*window;
-	SDL_Surface	*w_t[16];
+	SDL_Surface	*w_t[TEXTURENUM];
 
+	t_karta		karta;
 	int			pixels;
 	int			cunt;
 	int			end;
