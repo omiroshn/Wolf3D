@@ -199,14 +199,6 @@ static void	gnl_values(t_map *m, char *filename)
 	close(fd);
 	if (m->karta.data[(int)m->pos.x][(int)m->pos.y] != 0)
 		put_error("invalid player position.");
-	i = -1;
-	while (++i < m->karta.rows)
-	{
-		j = -1;
-		while (++j < m->karta.cols)
-			printf("%i ", m->karta.data[i][j]);
-		printf("\n");
-	}
 }
 
 void	read_map(t_map *m)
