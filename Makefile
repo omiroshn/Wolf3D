@@ -17,18 +17,26 @@ LIBFT_DIR = libft/
 SRC = $(addprefix src/, $(addsuffix .c, $(FILES)))
 OBJ = $(addprefix obj/, $(addsuffix .o, $(FILES)))
 OBJ_LIST = $(addsuffix .o, $(FILES))
+SDL_CFLAGS = $(shell sdl2-config --cflags)
 # SPEED = -O3
 FLAGS = -g
 HEADERS = -I./includes -I./libft/includes
-CGFLAGS_LINUX = -lm -lmlx -lXext -lX11 -pthread
-CGFLAGS_MAC = -lmlx -framework OpenGL -framework AppKit
+
+OS = $(shell uname)
+ifeq ($(OS), Linux)
+CGFLAGS = `sdl2-config --cflags --libs` -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+else
+CGFLAGS = -lmlx -framework OpenGL -framework AppKit
+endif
 
 INCLUDES	=	-I./frameworks/SDL2.framework/Versions/A/Headers \
 				-I./frameworks/SDL2_ttf.framework/Versions/A/Headers \
 				-I./frameworks/SDL2_image.framework/Versions/A/Headers \
 				-F./frameworks/
 
-CGFLAGS_SDL = 	-framework SDL2
+INCLUDES_LINUX = -I./frameworks/SDL2/
+
+#CGFLAGS_SDL = 	-framework SDL2
 
 FRAMEWORKS	=	-F./frameworks
 FRAMEWORKS	+=	-rpath ./frameworks
@@ -42,12 +50,12 @@ all: $(NAME)
 
 $(NAME): libft/libft.a $(OBJ)
 	@echo "\033[36mLinking...\033[0m"
-	@$(CC) -o $(NAME) $(OBJ) $(FLAGS) $(SPEED) $(CGFLAGS_SDL) $(INCLUDES) $(FRAMEWORKS) libft/libft.a
+	$(CC) -o $(NAME) $(OBJ) $(CGFLAGS) libft/libft.a
 	@echo "\033[32m[ ✔ ] Binary \033[1;32m$(NAME)\033[1;0m\033[32m created.\033[0m"
 libft/libft.a:
 	@make --no-print-directory -C $(LIBFT_DIR)
 obj/%.o: src/%.c
-	@$(CC) -o $@ $(FLAGS) $(INCLUDES) $(SPEED) $(HEADERS) -c $^
+	@$(CC) -o $@ $(CGFLAGS) $(HEADERS) -c $^
 	@echo "\033[37mCompilation of \033[97m$(notdir $<) \033[0m\033[37mdone. \033[0m"
 clean:
 	@rm -f $(OBJ)
