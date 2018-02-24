@@ -12,74 +12,6 @@
 
 #include "wolf3d.h"
 
-void	scan_ws(t_map *map, double d)
-{
-	if (!map->karta.data[(int)(map->pos.x + map->dir.x *
-		(map->mov_speed * map->move))][(int)map->pos.y])
-		map->pos.x += map->dir.x * d;
-	if (!map->karta.data[(int)map->pos.x][(int)(map->pos.y + map->dir.y
-		* (map->mov_speed * map->move))])
-		map->pos.y += map->dir.y * d;
-}
-
-void	scan_ad(t_map *map, double alpha)
-{
-	double old_dir_x;
-	double old_plane_x;
-
-	old_dir_x = map->dir.x;
-	map->dir.x = map->dir.x * cos(alpha) - map->dir.y * sin(alpha);
-	map->dir.y = old_dir_x * sin(alpha) + map->dir.y * cos(alpha);
-	old_plane_x = map->plane.x;
-	map->plane.x = map->plane.x * cos(alpha) - map->plane.y * sin(alpha);
-	map->plane.y = old_plane_x * sin(alpha) + map->plane.y * cos(alpha);
-}
-
-void	pull_down(SDL_Scancode key, t_map *map)
-{
-	key == SDL_SCANCODE_W ? map->move = 1 : 0;
-	key == SDL_SCANCODE_S ? map->move = -1 : 0;
-	key == SDL_SCANCODE_A ? map->rotate = 1 : 0;
-	key == SDL_SCANCODE_D ? map->rotate = -1 : 0;
-	key == SDL_SCANCODE_UP ? map->move = 1 : 0;
-	key == SDL_SCANCODE_DOWN ? map->move = -1 : 0;
-	key == SDL_SCANCODE_LEFT ? map->rotate = 1 : 0;
-	key == SDL_SCANCODE_RIGHT ? map->rotate = -1 : 0;
-	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.13)
-								&& (map->rot_speed = 0.07) : 0;
-	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.13)
-								&& (map->rot_speed = 0.07) : 0;
-}
-
-void	pull_up(SDL_Scancode key, t_map *map)
-{
-	key == SDL_SCANCODE_W || key == SDL_SCANCODE_S ? map->move = 0 : 0;
-	key == SDL_SCANCODE_A || key == SDL_SCANCODE_D ? map->rotate = 0 : 0;
-	key == SDL_SCANCODE_UP || key == SDL_SCANCODE_DOWN ? map->move = 0 : 0;
-	key == SDL_SCANCODE_LEFT || key == SDL_SCANCODE_RIGHT ? map->rotate = 0 : 0;
-	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.08)
-												&& (map->rot_speed = 0.05) : 0;
-	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.08)
-												&& (map->rot_speed = 0.05) : 0;
-}
-
-int		key_function(t_map *map)
-{
-	SDL_Event	e;
-
-	while(SDL_PollEvent(&e))
-	{
-		if ((e.type == SDL_QUIT) || (e.type == SDL_KEYDOWN
-						&& e.key.keysym.scancode == SDL_SCANCODE_ESCAPE))
-			return (0);
-		else if (e.type == SDL_KEYDOWN)
-			pull_down(e.key.keysym.scancode, map);
-		else if (e.type == SDL_KEYUP)
-			pull_up(e.key.keysym.scancode, map);
-	}
-	return (1);
-}
-
 void	draw_camera(t_map *m, int x)
 {
 	m->camera.x = 2 * x / (double)(WIDTH) - 1;
@@ -89,22 +21,16 @@ void	draw_camera(t_map *m, int x)
 	m->map.y = (int)(m->pos.y);
 	m->delta_dist.x = fabs(1 / m->ray_dir.x);
 	m->delta_dist.y = fabs(1 / m->ray_dir.y);
-	if (m->ray_dir.x < 0)
-	{
-		m->step.x = -1;
-		m->side_dist.x = (m->pos.x - m->map.x) * m->delta_dist.x;
-	}
-	else
+	m->step.x = -1;
+	m->side_dist.x = (m->pos.x - m->map.x) * m->delta_dist.x;
+	if (m->ray_dir.x >= 0)
 	{
 		m->step.x = 1;
 		m->side_dist.x = (m->map.x + 1.0 - m->pos.x) * m->delta_dist.x;
 	}
-	if (m->ray_dir.y < 0)
-	{
-		m->step.y = -1;
-		m->side_dist.y = (m->pos.y - m->map.y) * m->delta_dist.y;
-	}
-	else
+	m->step.y = -1;
+	m->side_dist.y = (m->pos.y - m->map.y) * m->delta_dist.y;
+	if (m->ray_dir.y >= 0)
 	{
 		m->step.y = 1;
 		m->side_dist.y = (m->map.y + 1.0 - m->pos.y) * m->delta_dist.y;
@@ -134,23 +60,25 @@ void	perform_dda(t_map *m)
 
 void	draw_wall(t_map *m, int x)
 {
-	int texture;
-	int lineHeight;
+	int	texture;
+	int	line_height;
+	int	y;
+	int	d;
 
 	m->wall_dist = m->side == 0 ?
-		(m->map.x - m->pos.x + (1 - m->step.x) / 2) / m->ray_dir.x :
-		(m->map.y - m->pos.y + (1 - m->step.y) / 2) / m->ray_dir.y;	
-	lineHeight = (int)(HEIGHT / m->wall_dist);
-	m->draw_start = -lineHeight / 2 + HEIGHT / 2;
-	m->draw_end = lineHeight / 2 + HEIGHT / 2;
+	(m->map.x - m->pos.x + (1 - m->step.x) / 2) / m->ray_dir.x :
+	(m->map.y - m->pos.y + (1 - m->step.y) / 2) / m->ray_dir.y;
+	line_height = (int)(HEIGHT / m->wall_dist);
+	m->draw_start = -line_height / 2 + HEIGHT / 2;
+	m->draw_end = line_height / 2 + HEIGHT / 2;
 	if (m->draw_start < 0)
 		m->draw_start = 0;
 	if (m->draw_end >= HEIGHT)
 		m->draw_end = HEIGHT - 1;
-	if (m->side == 0)
-		m->wall = m->pos.y + m->wall_dist * m->ray_dir.y;
-	else
-		m->wall = m->pos.x + m->wall_dist * m->ray_dir.x;
+	if (m->draw_end < 0)
+		m->draw_end = HEIGHT;
+	m->wall = m->side == 0 ? m->pos.y + m->wall_dist * m->ray_dir.y :
+	m->pos.x + m->wall_dist * m->ray_dir.x;
 	m->wall -= floor((m->wall));
 	texture = m->karta.data[m->map.x][m->map.y] - 1;
 	m->tex.x = (int)(m->wall * (double)(m->w_t[texture]->w));
@@ -158,16 +86,17 @@ void	draw_wall(t_map *m, int x)
 		m->tex.x = m->w_t[texture]->w - m->tex.x - 1;
 	if (m->side == 1 && m->ray_dir.y < 0)
 		m->tex.x = m->w_t[texture]->w - m->tex.x - 1;
-	int y = m->draw_start;
-	m->bufp = (unsigned int *)m->screen->pixels + m->draw_start * m->screen->w + x;
-	while (y <= m->draw_end)
+	y = m->draw_start - 1;
+	m->bufp = (t_uint *)m->screen->pixels + m->draw_start * m->screen->w + x;
+	while (++y <= m->draw_end)
 	{
-		int d = y * 2 - HEIGHT + lineHeight;
-		m->tex.y = ((d * m->w_t[texture]->w / lineHeight) / 2);
-		if (m->tex.x >= 0 && m->tex.x < m->w_t[texture]->h && m->tex.y >= 0 && m->tex.y < m->w_t[texture]->w)
-			*m->bufp = ((unsigned int *)m->w_t[texture]->pixels)[m->w_t[texture]->h * m->tex.y + m->tex.x];
+		d = y * 2 - HEIGHT + line_height;
+		m->tex.y = ((d * m->w_t[texture]->w / line_height) / 2);
+		if (m->tex.x >= 0 && m->tex.x < m->w_t[texture]->h &&
+			m->tex.y >= 0 && m->tex.y < m->w_t[texture]->w)
+			*m->bufp = ((t_uint *)m->w_t[texture]->pixels)
+						[m->w_t[texture]->h * m->tex.y + m->tex.x];
 		m->bufp += WIDTH;
-		y++;
 	}
 }
 
@@ -175,10 +104,8 @@ void	draw_floor(t_map *m)
 {
 	t_vec	current_floor;
 	t_vec	floor_wall;
+	double	weight;
 	int		y;
-	double weight;
-	int floorTexX, floorTexY;
-	int ceilTexX, ceilTexY;
 
 	if (m->side == 0 && m->ray_dir.x > 0)
 	{
@@ -203,25 +130,23 @@ void	draw_floor(t_map *m)
 	m->dist_wall = m->wall_dist;
 	m->dist_player = 0.0;
 
-	if (m->draw_end < 0)
-		m->draw_end = HEIGHT;
-	y = m->draw_end + 1;
-	while (y < HEIGHT)
+	
+	y = m->draw_end;
+	while (++y < HEIGHT)
 	{
 		m->current_dist = HEIGHT / (2.0 * y - HEIGHT);
 		weight = (m->current_dist - m->dist_player) / (m->dist_wall - m->dist_player);
 		current_floor.x = weight * floor_wall.x + (1.0 - weight) * m->pos.x;
 		current_floor.y = weight * floor_wall.y + (1.0 - weight) * m->pos.y;
-		floorTexX = (int)(current_floor.x * m->w_t[9]->w) % m->w_t[9]->w;
-		floorTexY = (int)(current_floor.y * m->w_t[9]->h) % m->w_t[9]->h;
-		ceilTexX = (int)(current_floor.x * m->w_t[10]->w) % m->w_t[10]->w;
-		ceilTexY = (int)(current_floor.y * m->w_t[10]->h) % m->w_t[10]->h;
-		//floor
-		*m->bufp = ((unsigned int *)m->w_t[9]->pixels)[m->w_t[9]->w * floorTexY + floorTexX];
-		//ceiling (symmetrical!)
-		*(m->bufp + (HEIGHT - 2 * y) * WIDTH) = ((unsigned int *)m->w_t[10]->pixels)[m->w_t[10]->w * ceilTexY + ceilTexX];
+		m->floor_tex.x = (int)(current_floor.x * m->w_t[9]->w) % m->w_t[9]->w;
+		m->floor_tex.y = (int)(current_floor.y * m->w_t[9]->h) % m->w_t[9]->h;
+		m->ceil_tex.x = (int)(current_floor.x * m->w_t[10]->w) % m->w_t[10]->w;
+		m->ceil_tex.y = (int)(current_floor.y * m->w_t[10]->h) % m->w_t[10]->h;
+		*m->bufp = ((t_uint *)m->w_t[9]->pixels)
+							[m->w_t[9]->w * m->floor_tex.y + m->floor_tex.x];
+		*(m->bufp + (HEIGHT - 2 * y) * WIDTH) =
+		((t_uint *)m->w_t[10]->pixels)[m->w_t[10]->w * m->ceil_tex.y + m->ceil_tex.x];
 		m->bufp += WIDTH;
-		y++;
 	}
 }
 
@@ -234,14 +159,5 @@ void	draw_cursor(t_map *m)
 	{
 		m->image[HEIGHT * WIDTH / 2 + WIDTH / 2 + z] = 0xFFFFFF;
 		m->image[HEIGHT * WIDTH / 2 + (z * WIDTH + WIDTH / 2)] = 0xFFFFFF;
-			// tipa proverka
-		// if (m->image[HEIGHT * WIDTH / 2 + WIDTH / 2 + z] == 0xFFFFFF)
-		// 	m->image[HEIGHT * WIDTH / 2 + WIDTH / 2 + z] = 0x000000;
-		// else
-		// 	m->image[HEIGHT * WIDTH / 2 + WIDTH / 2 + z] = 0xFFFFFF;
-		// if (m->image[HEIGHT * WIDTH / 2 + (z * WIDTH + WIDTH / 2)] == 0xFFFFFF)
-		// 	m->image[HEIGHT * WIDTH / 2 + (z * WIDTH + WIDTH / 2)] = 0x000000;
-		// else
-		// 	m->image[HEIGHT * WIDTH / 2 + (z * WIDTH + WIDTH / 2)] = 0xFFFFFF;
 	}
 }
