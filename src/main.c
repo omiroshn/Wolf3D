@@ -160,7 +160,6 @@ static void	gnl_values(t_map *m, char *filename)
 	int		fd;
 	char	*lol;
 	char	**numbers;
-	int		temp;
 	int		i;
 	int		j;
 
@@ -201,20 +200,21 @@ static void	gnl_values(t_map *m, char *filename)
 		put_error("invalid player position.");
 }
 
-void	read_map(t_map *m)
+void	read_map(t_map *m, char *map)
 {
-	static char map[] = "./resources/maps/map2.map";
-	char		*line;
+	// static char map[] = "./resources/maps/map1.map";
 
 	gnl_values(m, map);
 }
 
-int main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	t_map		map;
 	static int	running = 1;
 
-	read_map(&map);
+	if (argc != 2)
+		put_error("number of arguments is invalid.");
+	read_map(&map, argv[1]);
 	init(&map);
 	load_textures(&map);
 	while (running)

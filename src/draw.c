@@ -14,9 +14,11 @@
 
 void	scan_ws(t_map *map, double d)
 {
-	if (!map->karta.data[(int)(map->pos.x + map->dir.x * (map->mov_speed * map->move))][(int)map->pos.y])
+	if (!map->karta.data[(int)(map->pos.x + map->dir.x *
+		(map->mov_speed * map->move))][(int)map->pos.y])
 		map->pos.x += map->dir.x * d;
-	if (!map->karta.data[(int)map->pos.x][(int)(map->pos.y + map->dir.y * (map->mov_speed * map->move))])
+	if (!map->karta.data[(int)map->pos.x][(int)(map->pos.y + map->dir.y
+		* (map->mov_speed * map->move))])
 		map->pos.y += map->dir.y * d;
 }
 
@@ -35,26 +37,30 @@ void	scan_ad(t_map *map, double alpha)
 
 void	pull_down(SDL_Scancode key, t_map *map)
 {
-	key == SDL_SCANCODE_W ? map->move =  1 : 0;
-	key == SDL_SCANCODE_S ? map->move =  -1 : 0;
+	key == SDL_SCANCODE_W ? map->move = 1 : 0;
+	key == SDL_SCANCODE_S ? map->move = -1 : 0;
 	key == SDL_SCANCODE_A ? map->rotate = 1 : 0;
 	key == SDL_SCANCODE_D ? map->rotate = -1 : 0;
-	key == SDL_SCANCODE_UP ? map->move =  1 : 0;
-	key == SDL_SCANCODE_DOWN ? map->move =  -1 : 0;
+	key == SDL_SCANCODE_UP ? map->move = 1 : 0;
+	key == SDL_SCANCODE_DOWN ? map->move = -1 : 0;
 	key == SDL_SCANCODE_LEFT ? map->rotate = 1 : 0;
 	key == SDL_SCANCODE_RIGHT ? map->rotate = -1 : 0;
-	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.13) && (map->rot_speed = 0.07) : 0;
-	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.13) && (map->rot_speed = 0.07) : 0;
+	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.13)
+								&& (map->rot_speed = 0.07) : 0;
+	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.13)
+								&& (map->rot_speed = 0.07) : 0;
 }
 
 void	pull_up(SDL_Scancode key, t_map *map)
 {
-	key == SDL_SCANCODE_W || key == SDL_SCANCODE_S ? map->move =  0 : 0;
+	key == SDL_SCANCODE_W || key == SDL_SCANCODE_S ? map->move = 0 : 0;
 	key == SDL_SCANCODE_A || key == SDL_SCANCODE_D ? map->rotate = 0 : 0;
-	key == SDL_SCANCODE_UP || key == SDL_SCANCODE_DOWN ? map->move =  0 : 0;
+	key == SDL_SCANCODE_UP || key == SDL_SCANCODE_DOWN ? map->move = 0 : 0;
 	key == SDL_SCANCODE_LEFT || key == SDL_SCANCODE_RIGHT ? map->rotate = 0 : 0;
-	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.08) && (map->rot_speed = 0.05) : 0;
-	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.08) && (map->rot_speed = 0.05) : 0;
+	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.08)
+												&& (map->rot_speed = 0.05) : 0;
+	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.08)
+												&& (map->rot_speed = 0.05) : 0;
 }
 
 int		key_function(t_map *map)
@@ -131,31 +137,21 @@ void	draw_wall(t_map *m, int x)
 	int texture;
 	int lineHeight;
 
-	//Calculate distance of perpendicular ray (Euclidean distance will give fisheye effect!)
-	if (m->side == 0)
-		m->wall_dist = (m->map.x - m->pos.x + (1 - m->step.x) / 2) / m->ray_dir.x;
-	else
-		m->wall_dist = (m->map.y - m->pos.y + (1 - m->step.y) / 2) / m->ray_dir.y;
-
-	//Calculate height of line to draw on screen
+	m->wall_dist = m->side == 0 ?
+		(m->map.x - m->pos.x + (1 - m->step.x) / 2) / m->ray_dir.x :
+		(m->map.y - m->pos.y + (1 - m->step.y) / 2) / m->ray_dir.y;	
 	lineHeight = (int)(HEIGHT / m->wall_dist);
-
-	//calculate lowest and highest pixel to fill in current stripe
 	m->draw_start = -lineHeight / 2 + HEIGHT / 2;
 	m->draw_end = lineHeight / 2 + HEIGHT / 2;
 	if (m->draw_start < 0)
 		m->draw_start = 0;
 	if (m->draw_end >= HEIGHT)
 		m->draw_end = HEIGHT - 1;
-
-	//calculate value of m->wall
-	//where exactly the wall was hit
 	if (m->side == 0)
 		m->wall = m->pos.y + m->wall_dist * m->ray_dir.y;
 	else
 		m->wall = m->pos.x + m->wall_dist * m->ray_dir.x;
 	m->wall -= floor((m->wall));
-	//x coordinate on the texture
 	texture = m->karta.data[m->map.x][m->map.y] - 1;
 	m->tex.x = (int)(m->wall * (double)(m->w_t[texture]->w));
 	if (m->side == 0 && m->ray_dir.x > 0)
