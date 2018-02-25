@@ -14,11 +14,11 @@
 
 void	scan_ws(t_map *map, double d)
 {
-	if (!map->karta.data[(int)(map->pos.x + map->dir.x *
-		(map->mov_speed * map->move))][(int)map->pos.y])
+	if (!IS_WALL(map->karta.data[(int)(map->pos.x + map->dir.x *
+		(map->mov_speed * map->move))][(int)map->pos.y]))
 		map->pos.x += map->dir.x * d;
-	if (!map->karta.data[(int)map->pos.x][(int)(map->pos.y + map->dir.y
-		* (map->mov_speed * map->move))])
+	if (!IS_WALL(map->karta.data[(int)map->pos.x][(int)(map->pos.y + map->dir.y
+		* (map->mov_speed * map->move))]))
 		map->pos.y += map->dir.y * d;
 }
 

@@ -31,7 +31,16 @@
 # define WIDTH 1280
 # define HEIGHT 1024
 # define THREADS 8
-# define TEXTURENUM 11
+# define TEXTURENUM 20
+
+# define IS_WALL(n)(n & 0xFFFFL)
+# define TOP_WALL(n)((n & 0xFL) - 1)
+# define BOT_WALL(n)(((n & 0xF0L) >> 4) - 1)
+# define RIGHT_WALL(n)(((n & 0xF00L) >> 8) - 1)
+# define LEFT_WALL(n)(((n & 0xF000L) >> 12) - 1)
+# define FLOOR(n)(((n & 0xF00000L) >> 20))
+# define CEIL(n)(((n & 0xF0000L) >> 16))
+
 
 typedef unsigned int t_uint;
 
@@ -59,7 +68,7 @@ typedef	struct	s_karta
 {
 	int			rows;
 	int			cols;
-	int			**data;
+	t_uint		**data;
 }				t_karta;
 
 typedef	struct	s_map
@@ -78,12 +87,13 @@ typedef	struct	s_map
 	int			draw_start;
 	int			draw_end;
 	int			side;
+	int			texture;
+	int			line_height;
 	double		wall_dist;
 	double		mov_speed;
 	double		rot_speed;
 	double		wall;
 	double		dist_wall;
-	double		dist_player;
 	double		current_dist;
 	t_vec		pos;
 	t_vec		dir;
@@ -101,9 +111,9 @@ typedef	struct	s_map
 
 typedef struct	s_wolf
 {
+	t_map		map;
 	int			start;
 	int			end;
-	t_map		map;
 }				t_wolf;
 
 /*
@@ -115,8 +125,8 @@ void	threads_create(SDL_Surface *screen, t_map map);
 int		key_function(t_map *map);
 void	draw_camera(t_map *m, int x);
 void	perform_dda(t_map *m);
-void	draw_wall(t_map *m, int x);
-void	draw_floor(t_map *m);
+void	draw_wall(t_map *m, int x, t_uint **data);
+void	draw_floor(t_map *m, t_uint **data);
 void	draw_cursor(t_map *m);
 
 /*
