@@ -26,12 +26,11 @@
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 
-# define mapWidth 24
-# define mapHeight 24
 # define WIDTH 1280
 # define HEIGHT 1024
 # define THREADS 8
 # define TEXTURENUM 20
+# define TRUE 1
 
 # define IS_WALL(n)(n & 0xFFFFL)
 # define TOP_WALL(n)((n & 0xFL) - 1)
@@ -79,6 +78,8 @@ typedef	struct	s_map
 	t_uint		*image;
 	t_uint		*bufp;
 	t_karta		karta;
+	int			w;
+	int			h;
 	int			pixels;
 	int			cunt;
 	int			end;
@@ -128,13 +129,14 @@ void	perform_dda(t_map *m);
 void	draw_wall(t_map *m, int x, t_uint **data);
 void	draw_floor(t_map *m, t_uint **data);
 void	draw_cursor(t_map *m);
+void	put_error(const char *msg);
 
 /*
 **		event.c
 */
 
 int		key_function(t_map *map);
-void	key_up(SDL_Scancode key, t_map *map);
+void	key_up(SDL_Event e, SDL_Scancode key, t_map *map);
 void	key_down(SDL_Scancode key, t_map *map);
 void	scan_ws(t_map *map, double alpha);
 void	scan_ad(t_map *map, double alpha);

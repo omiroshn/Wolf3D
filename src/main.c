@@ -34,8 +34,8 @@ void	threads_create(SDL_Surface *screen, t_map map)
 	double		coef;
 	int			i;
 
-	ft_bzero(screen->pixels, WIDTH * HEIGHT * 4);
-	coef = WIDTH / THREADS;
+	ft_bzero(screen->pixels, screen->w * screen->h * 4);
+	coef = screen->w / THREADS;
 	i = -1;
 	while (++i < THREADS)
 	{
@@ -81,12 +81,12 @@ void	load_textures_wolf(t_map *m)
 		put_error(IMG_GetError());
 	if (!(m->w_t[8] = IMG_Load("./resources/images/torch.png")))
 		put_error(IMG_GetError());
+	if (!(m->w_t[9] = IMG_Load("./resources/images/sand.jpg")))
+		put_error(IMG_GetError());
 }
 
 void	load_textures_anime(t_map *m)
 {
-	if (!(m->w_t[9] = IMG_Load("./resources/images/sand.jpg")))
-		put_error(IMG_GetError());
 	if (!(m->w_t[10] = IMG_Load("./resources/images/uganda.jpg")))
 		put_error(IMG_GetError());
 	if (!(m->w_t[11] = IMG_Load("./resources/images/akatski.jpg")))
@@ -99,12 +99,6 @@ void	load_textures_anime(t_map *m)
 		put_error(IMG_GetError());
 	if (!(m->w_t[15] = IMG_Load("./resources/images/narutoramen.jpg")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[16] = IMG_Load("./resources/images/narutopixel.png")))
-		put_error(IMG_GetError());
-	if (!(m->w_t[17] = IMG_Load("./resources/images/ugandaflag.png")))
-		put_error(IMG_GetError());
-	if (!(m->w_t[18] = IMG_Load("./resources/images/eye.png")))
-		put_error(IMG_GetError());
 }
 
 void	lsync(void)
@@ -116,7 +110,7 @@ void	lsync(void)
 	vsync == 1 ? SDL_GL_SetSwapInterval(1) : 0;
 	if (vsync)
 	{
-		delay = 17 - (SDL_GetTicks() - time);
+		delay = 16 - (SDL_GetTicks() - time);
 		if (delay < 0)
 			SDL_Delay(0);
 		else
@@ -159,6 +153,8 @@ void	init(t_map *m)
 	m->rotate = 0;
 	m->mov_speed = 0.08;
 	m->rot_speed = 0.05;
+	m->w = WIDTH;
+	m->h = HEIGHT;
 }
 
 int		ft_countwords(char *str, char c)
@@ -203,8 +199,8 @@ void	alloc_map(t_map *m, int fd, char *lol, char **numbers)
 		free(lol);
 	}
 	close(fd);
-	// if (m->karta.data[(int)m->pos.x][(int)m->pos.y] != 0)
-	// 	put_error("invalid player position.");
+	if (IS_WALL(m->karta.data[(int)m->pos.x][(int)m->pos.y]))
+		put_error("invalid player position.");
 }
 
 void	check_textures(t_map *m, t_uint **data)
@@ -260,8 +256,7 @@ void	read_map(t_map *m, char *filename)
 
 int		main(int argc, char **argv)
 {
-	t_map		map;
-	static int	running = 1;
+	t_map	map;
 
 	if (argc != 2)
 		put_usage();
@@ -269,7 +264,7 @@ int		main(int argc, char **argv)
 	init(&map);
 	load_textures_wolf(&map);
 	load_textures_anime(&map);
-	while (running)
+	while (TRUE)
 	{
 		if (!key_function(&map))
 			break ;

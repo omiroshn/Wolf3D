@@ -14,7 +14,7 @@
 
 void	draw_camera(t_map *m, int x)
 {
-	m->camera.x = 2 * x / (double)(WIDTH) - 1;
+	m->camera.x = 2 * x / (double)(m->w) - 1;
 	m->ray_dir.x = m->dir.x + m->plane.x * m->camera.x;
 	m->ray_dir.y = m->dir.y + m->plane.y * m->camera.x;
 	m->map.x = (int)(m->pos.x);
@@ -67,13 +67,13 @@ void	draw_screen_wall(t_map *m, int texture, int line_height, int x)
 	m->bufp = (t_uint *)m->screen->pixels + m->draw_start * m->screen->w + x;
 	while (++y <= m->draw_end)
 	{
-		d = y * 2 - HEIGHT + line_height;
+		d = y * 2 - m->h + line_height;
 		m->tex.y = ((d * m->w_t[texture]->w / line_height) / 2);
 		if (m->tex.x >= 0 && m->tex.x < m->w_t[texture]->h &&
 			m->tex.y >= 0 && m->tex.y < m->w_t[texture]->w)
 			*m->bufp = ((t_uint *)m->w_t[texture]->pixels)
 						[m->w_t[texture]->h * m->tex.y + m->tex.x];
-		m->bufp += WIDTH;
+		m->bufp += m->w;
 	}
 }
 
@@ -82,12 +82,12 @@ void	draw_wall(t_map *m, int x, t_uint **data)
 	m->wall_dist = m->side == 0 ?
 	(m->map.x - m->pos.x + (1 - m->step.x) / 2) / m->ray_dir.x :
 	(m->map.y - m->pos.y + (1 - m->step.y) / 2) / m->ray_dir.y;
-	m->line_height = (int)(HEIGHT / m->wall_dist);
-	m->draw_start = -m->line_height / 2 + HEIGHT / 2;
-	m->draw_end = m->line_height / 2 + HEIGHT / 2;
+	m->line_height = (int)(m->h / m->wall_dist);
+	m->draw_start = -m->line_height / 2 + m->h / 2;
+	m->draw_end = m->line_height / 2 + m->h / 2;
 	m->draw_start < 0 ? m->draw_start = 0 : m->draw_start;
-	m->draw_end >= HEIGHT ? m->draw_end = HEIGHT - 1 : m->draw_end;
-	m->draw_end < 0 ? m->draw_end = HEIGHT : m->draw_end;
+	m->draw_end >= m->h ? m->draw_end = m->h - 1 : m->draw_end;
+	m->draw_end < 0 ? m->draw_end = m->h : m->draw_end;
 	m->wall = m->side == 0 ? m->pos.y + m->wall_dist * m->ray_dir.y :
 	m->pos.x + m->wall_dist * m->ray_dir.x;
 	m->wall -= floor((m->wall));
@@ -133,7 +133,7 @@ t_vec	current_floor(t_map *m, t_vec *cur_floor, t_vec *floor_wall, int y)
 {
 	double	weight;
 
-	weight = HEIGHT / (2.0 * y - HEIGHT) / m->dist_wall;
+	weight = m->h / (2.0 * y - m->h) / m->dist_wall;
 	cur_floor->x = weight * floor_wall->x + (1.0 - weight) * m->pos.x;
 	cur_floor->y = weight * floor_wall->y + (1.0 - weight) * m->pos.y;
 	return (*cur_floor);
@@ -160,17 +160,17 @@ void	draw_floor(t_map *m, t_uint **data)
 	floor_wall_dist(m, &floor_wall);
 	m->dist_wall = m->wall_dist;
 	y = m->draw_end;
-	while (++y < HEIGHT)
+	while (++y < m->h)
 	{
 		c_f = current_floor(m, &c_f, &floor_wall, y);
 		env_textures(m, &c_f, data);
 		*m->bufp = ((t_uint *)m->w_t[FLOOR(data[(int)c_f.x]
 			[(int)c_f.y])]->pixels)[m->w_t[FLOOR(data[(int)c_f.x]
 				[(int)c_f.y])]->w * m->floor_tex.y + m->floor_tex.x];
-		*(m->bufp + (HEIGHT - 2 * y) * WIDTH) = ((t_uint *)m->w_t[CEIL(data
+		*(m->bufp + (m->h - 2 * y) * m->w) = ((t_uint *)m->w_t[CEIL(data
 			[(int)c_f.x][(int)c_f.y])]->pixels)[m->w_t[CEIL(data[(int)c_f.x]
 			[(int)c_f.y])]->w * m->ceil_tex.y + m->ceil_tex.x];
-		m->bufp += WIDTH;
+		m->bufp += m->w;
 	}
 }
 
@@ -181,7 +181,7 @@ void	draw_cursor(t_map *m)
 	z = -5;
 	while (++z < 5)
 	{
-		m->image[HEIGHT * WIDTH / 2 + WIDTH / 2 + z] = 0xFFFFFF;
-		m->image[HEIGHT * WIDTH / 2 + (z * WIDTH + WIDTH / 2)] = 0xFFFFFF;
+		m->image[m->h * m->w / 2 + m->w / 2 + z] = 0xFFFFFF;
+		m->image[m->h * m->w / 2 + (z * m->w + m->w / 2)] = 0xFFFFFF;
 	}
 }

@@ -37,13 +37,6 @@ FRAMEWORKS	=	-F./frameworks \
 				-framework SDL2 -framework SDL2_ttf -framework SDL2_image
 endif
 
-
-
-INCLUDES_LINUX = -I./frameworks/SDL2/
-
-#CGFLAGS_SDL = 	-framework SDL2
-
-
 all: $(NAME)
 
 .PHONY: all clean
