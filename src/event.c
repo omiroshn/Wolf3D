@@ -69,40 +69,19 @@ void	key_up(SDL_Event e, SDL_Scancode key, t_map *map)
 	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.08)
 												&& (map->rot_speed = 0.05) : 0;
 	if (key == SDL_SCANCODE_TAB)
-	{
-		// full_screen && !(full_screen = 0) ? SDL_SetWindowFullscreen(map->window, 0)
-		// : (full_screen = 1) && SDL_SetWindowFullscreen(map->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		if (!full_screen)
-		{
-			int i = SDL_GetWindowDisplayIndex(map->window);
-			SDL_Rect j;
-			SDL_GetDisplayBounds(i, &j);
-			// screenWidth = j.w;
-			// screenHeight = j.h;
-			SDL_SetWindowFullscreen(map->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			full_screen = 1;
-		}
-		else
-		{
-			int i = SDL_GetWindowDisplayIndex(map->window);
-			// screenWidth = windowedWidth;
-			// screenHeight = windowedHeight;
-			SDL_SetWindowFullscreen(map->window, 0);
-			full_screen = 0;
-		}
-	}
+		full_screen && !(full_screen = 0)
+		? SDL_SetWindowFullscreen(map->window, 0) : (full_screen = 1)
+		&& SDL_SetWindowFullscreen(map->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
-void	sgl_resize_window(t_map *m, t_uint wind_id, int new_width, int new_height)
+void	resize_window(t_map *m, int new_width, int new_height)
 {
-	// if (!(win = sgl_get_window_by_id(win_id)))
-	// 	return ;
 	m->w = new_width;
 	m->h = new_height;
 	!(m->screen = SDL_GetWindowSurface(m->window))
 		? put_error(SDL_GetError()) : 0;
+	m->image = m->screen->pixels;
 }
-
 
 int		key_function(t_map *map)
 {
@@ -114,8 +93,7 @@ int		key_function(t_map *map)
 						&& e.key.keysym.scancode == SDL_SCANCODE_ESCAPE))
 			return (0);
 		else if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-			sgl_resize_window(map, e.window.windowID, e.window.data1,
-										e.window.data2);
+			resize_window(map, e.window.data1, e.window.data2);
 		else if (e.type == SDL_KEYDOWN)
 			key_down(e.key.keysym.scancode, map);
 		else if (e.type == SDL_KEYUP)

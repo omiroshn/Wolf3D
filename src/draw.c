@@ -64,7 +64,7 @@ void	draw_screen_wall(t_map *m, int texture, int line_height, int x)
 	int	d;
 
 	y = m->draw_start - 1;
-	m->bufp = (t_uint *)m->screen->pixels + m->draw_start * m->screen->w + x;
+	m->bufp = (t_uint *)m->screen->pixels + m->draw_start * m->w + x;
 	while (++y <= m->draw_end)
 	{
 		d = y * 2 - m->h + line_height;

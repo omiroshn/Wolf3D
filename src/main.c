@@ -271,7 +271,7 @@ int		main(int argc, char **argv)
 		map.move ? scan_ws(&map, map.move * map.mov_speed) : 0;
 		map.rotate ? scan_ad(&map, map.rotate * map.rot_speed) : 0;
 		threads_create(map.screen, map);
-		// display_fps(map.screen);
+		display_fps(map.screen);
 		lsync();
 		SDL_UpdateWindowSurface(map.window);
 	}
