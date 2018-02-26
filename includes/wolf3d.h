@@ -29,7 +29,7 @@
 # define WIDTH 1280
 # define HEIGHT 1024
 # define THREADS 8
-# define TEXTURENUM 20
+# define TEXTURENUM 16
 # define TRUE 1
 
 # define IS_WALL(n)(n & 0xFFFFL)
@@ -39,7 +39,11 @@
 # define LEFT_WALL(n)(((n & 0xF000L) >> 12) - 1)
 # define FLOOR(n)(((n & 0xF00000L) >> 20))
 # define CEIL(n)(((n & 0xF0000L) >> 16))
+# define SPRITE(n)((n & 0xF000000L) >> 24)
 
+# define MAPS_FOLDER "resources/maps/"
+# define W_TEX_FOLDER "resources/images/wolf/"
+# define M_TEX_FOLDER "resources/images/minecraft/"
 
 typedef unsigned int t_uint;
 
@@ -75,9 +79,13 @@ typedef	struct	s_map
 	SDL_Surface	*screen;
 	SDL_Window	*window;
 	SDL_Surface	*w_t[TEXTURENUM];
+	SDL_Surface	*st_t[TEXTURENUM];
+	SDL_Surface *sprite_tex;
+	SDL_Surface	*weapon;
 	t_uint		*image;
 	t_uint		*bufp;
 	t_karta		karta;
+	char		*name;
 	int			w;
 	int			h;
 	int			pixels;
@@ -125,10 +133,11 @@ void	draw(t_wolf *w);
 void	threads_create(SDL_Surface *screen, t_map map);
 int		key_function(t_map *map);
 void	draw_camera(t_map *m, int x);
-void	perform_dda(t_map *m);
+void	perform_dda(t_map *m, int x);
 void	draw_wall(t_map *m, int x, t_uint **data);
 void	draw_floor(t_map *m, t_uint **data);
 void	draw_cursor(t_map *m);
+void	draw_weapon(t_map *m);
 void	put_error(const char *msg);
 
 /*

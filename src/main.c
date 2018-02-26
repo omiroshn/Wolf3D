@@ -20,10 +20,10 @@ void	draw(t_wolf *w)
 	while (++x < w->end)
 	{
 		draw_camera(&w->map, x);
-		perform_dda(&w->map);
+		perform_dda(&w->map, x);
 		draw_wall(&w->map, x, w->map.karta.data);
 		draw_floor(&w->map, w->map.karta.data);
-		draw_cursor(&w->map);
+		// draw_sprite(&w->map, w->map.karta.data);
 	}
 }
 
@@ -61,44 +61,122 @@ void	put_usage(void)
 	exit(-1);
 }
 
+SDL_Surface	*load_image(char *path)
+{
+	SDL_Surface	*ret;
+	SDL_Surface	*tmp;
+	SDL_RWops	*rwops;
+
+	if (!(rwops = SDL_RWFromFile(path, "r")))
+		return (NULL);
+	if (!(tmp = IMG_Load_RW(rwops, 1)))
+		return (NULL);
+	ret = SDL_ConvertSurfaceFormat(tmp, SDL_PIXELFORMAT_ARGB8888, 0);
+	SDL_FreeSurface(tmp);
+	return (ret);
+}
+
+void	load_textures_minecraft(t_map *m)
+{
+	if (!(m->w_t[0] = IMG_Load(M_TEX_FOLDER"dirt.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[1] = IMG_Load(M_TEX_FOLDER"sand.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[2] = IMG_Load(M_TEX_FOLDER"cobblestone_mossy.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[3] = IMG_Load(M_TEX_FOLDER"stone.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[4] = IMG_Load(M_TEX_FOLDER"coal_ore.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[5] = IMG_Load(M_TEX_FOLDER"diamond_ore.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[6] = IMG_Load(M_TEX_FOLDER"brick.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[7] = IMG_Load(M_TEX_FOLDER"bookshelf.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[8] = IMG_Load(M_TEX_FOLDER"crafting_table_front.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[9] = IMG_Load(M_TEX_FOLDER"obsidian.png")))
+		put_error(IMG_GetError());
+}
+
+void	load_textures_minecraft2(t_map *m)
+{
+	if (!(m->w_t[10] = IMG_Load(M_TEX_FOLDER"farmland_wet.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[11] = IMG_Load(M_TEX_FOLDER"sandstone_normal.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[12] = load_image(M_TEX_FOLDER"apple_golden.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[13] = load_image(M_TEX_FOLDER"destroy_stage_1.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[14] = load_image(M_TEX_FOLDER"torch_on.png")))
+		put_error(IMG_GetError());
+	if (!(m->w_t[15] = load_image(M_TEX_FOLDER"cookie.png")))
+		put_error(IMG_GetError());
+}
+
 void	load_textures_wolf(t_map *m)
 {
-	if (!(m->w_t[0] = IMG_Load("./resources/images/eagle.png")))
+	if (!(m->w_t[0] = IMG_Load(W_TEX_FOLDER"eagle.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[1] = IMG_Load("./resources/images/redbrick.png")))
+	if (!(m->w_t[1] = IMG_Load(W_TEX_FOLDER"redbrick.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[2] = IMG_Load("./resources/images/purplestone.png")))
+	if (!(m->w_t[2] = IMG_Load(W_TEX_FOLDER"purplestone.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[3] = IMG_Load("./resources/images/greystone.png")))
+	if (!(m->w_t[3] = IMG_Load(W_TEX_FOLDER"greystone.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[4] = IMG_Load("./resources/images/colorstone.png")))
+	if (!(m->w_t[4] = IMG_Load(W_TEX_FOLDER"colorstone.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[5] = IMG_Load("./resources/images/mossy.png")))
+	if (!(m->w_t[5] = IMG_Load(W_TEX_FOLDER"mossy.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[6] = IMG_Load("./resources/images/wood.png")))
+	if (!(m->w_t[6] = IMG_Load(W_TEX_FOLDER"wood.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[7] = IMG_Load("./resources/images/hitler.png")))
+	if (!(m->w_t[7] = IMG_Load(W_TEX_FOLDER"hitler.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[8] = IMG_Load("./resources/images/torch.png")))
+	if (!(m->w_t[8] = IMG_Load(W_TEX_FOLDER"torch.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[9] = IMG_Load("./resources/images/sand.jpg")))
+	if (!(m->w_t[9] = IMG_Load(W_TEX_FOLDER"sand.jpg")))
 		put_error(IMG_GetError());
 }
 
 void	load_textures_anime(t_map *m)
 {
-	if (!(m->w_t[10] = IMG_Load("./resources/images/uganda.jpg")))
+	if (!(m->w_t[10] = load_image(W_TEX_FOLDER"barrel.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[11] = IMG_Load("./resources/images/akatski.jpg")))
+	if (!(m->w_t[11] = load_image(W_TEX_FOLDER"pillar.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[12] = IMG_Load("./resources/images/anime.png")))
+	if (!(m->w_t[12] = load_image(W_TEX_FOLDER"greenlight.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[13] = IMG_Load("./resources/images/pain.png")))
+	if (!(m->w_t[13] = IMG_Load(W_TEX_FOLDER"pain.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[14] = IMG_Load("./resources/images/kakashi.png")))
+	if (!(m->w_t[14] = IMG_Load(W_TEX_FOLDER"kakashi.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[15] = IMG_Load("./resources/images/narutoramen.jpg")))
+	if (!(m->w_t[15] = IMG_Load(W_TEX_FOLDER"narutoramen.jpg")))
 		put_error(IMG_GetError());
+}
+
+void	define_textures(t_map *m, char *map_name)
+{
+	m->name = map_name;
+	if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
+	{
+		load_textures_wolf(m);
+		load_textures_anime(m);
+		if (!(m->weapon = IMG_Load("./resources/images/weapon.png")))
+			put_error(IMG_GetError());
+		if (!(m->sprite_tex = IMG_Load(W_TEX_FOLDER"barrel.png")))
+			put_error(IMG_GetError());
+	}
+	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
+	{
+		load_textures_minecraft(m);
+		load_textures_minecraft2(m);
+		if (!(m->weapon = IMG_Load("./resources/images/pickaxe.png")))
+			put_error(IMG_GetError());
+		if (!(m->sprite_tex = IMG_Load(W_TEX_FOLDER"barrel.png")))
+			put_error(IMG_GetError());
+	}
 }
 
 void	lsync(void)
@@ -148,7 +226,7 @@ void	init(t_map *m)
 	m->dir.x = -1;
 	m->dir.y = 0;
 	m->plane.x = 0;
-	m->plane.y = 0.66;
+	m->plane.y = 0.77;
 	m->move = 0;
 	m->rotate = 0;
 	m->mov_speed = 0.08;
@@ -245,8 +323,8 @@ void	read_map(t_map *m, char *filename)
 	if (get_next_line(fd, &lol) != 1 || ft_countwords(lol, ' ') != 2)
 		put_error("map invalid.");
 	numbers = ft_strsplit(lol, ' ');
-	m->pos.x = ft_atoi(numbers[1]) - 0.5;
-	m->pos.y = ft_atoi(numbers[0]) - 0.5;
+	m->pos.x = ft_atoi(numbers[0]) - 0.5;
+	m->pos.y = ft_atoi(numbers[1]) - 0.5;
 	if (m->pos.x <= 1 || m->pos.x > m->karta.rows - 1
 		|| m->pos.y <= 1 || m->pos.y > m->karta.cols - 1)
 		put_error("invalid player position.");
@@ -262,8 +340,7 @@ int		main(int argc, char **argv)
 		put_usage();
 	read_map(&map, argv[1]);
 	init(&map);
-	load_textures_wolf(&map);
-	load_textures_anime(&map);
+	define_textures(&map, argv[1]);
 	while (TRUE)
 	{
 		if (!key_function(&map))
@@ -271,6 +348,8 @@ int		main(int argc, char **argv)
 		map.move ? scan_ws(&map, map.move * map.mov_speed) : 0;
 		map.rotate ? scan_ad(&map, map.rotate * map.rot_speed) : 0;
 		threads_create(map.screen, map);
+		draw_cursor(&map);
+		draw_weapon(&map);
 		display_fps(map.screen);
 		lsync();
 		SDL_UpdateWindowSurface(map.window);
