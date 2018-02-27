@@ -40,6 +40,7 @@
 # define FLOOR(n)(((n & 0xF00000L) >> 20))
 # define CEIL(n)(((n & 0xF0000L) >> 16))
 # define SPRITE(n)((n & 0xF000000L) >> 24)
+# define IS_SPRITE(n)((n & 0xF0000000L) >> 28)
 
 # define MAPS_FOLDER "resources/maps/"
 # define W_TEX_FOLDER "resources/images/wolf/"
@@ -95,6 +96,7 @@ typedef	struct	s_map
 	int			rotate;
 	int			draw_start;
 	int			draw_end;
+	int			s_tex;
 	int			side;
 	int			texture;
 	int			line_height;
@@ -104,6 +106,8 @@ typedef	struct	s_map
 	double		wall;
 	double		dist_wall;
 	double		current_dist;
+	int			sprite_h;
+	int			sprite_w;
 	t_vec		pos;
 	t_vec		dir;
 	t_vec		plane;

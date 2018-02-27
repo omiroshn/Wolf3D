@@ -23,7 +23,6 @@ void	draw(t_wolf *w)
 		perform_dda(&w->map, x);
 		draw_wall(&w->map, x, w->map.karta.data);
 		draw_floor(&w->map, w->map.karta.data);
-		// draw_sprite(&w->map, w->map.karta.data);
 	}
 }
 
@@ -61,21 +60,6 @@ void	put_usage(void)
 	exit(-1);
 }
 
-SDL_Surface	*load_image(char *path)
-{
-	SDL_Surface	*ret;
-	SDL_Surface	*tmp;
-	SDL_RWops	*rwops;
-
-	if (!(rwops = SDL_RWFromFile(path, "r")))
-		return (NULL);
-	if (!(tmp = IMG_Load_RW(rwops, 1)))
-		return (NULL);
-	ret = SDL_ConvertSurfaceFormat(tmp, SDL_PIXELFORMAT_ARGB8888, 0);
-	SDL_FreeSurface(tmp);
-	return (ret);
-}
-
 void	load_textures_minecraft(t_map *m)
 {
 	if (!(m->w_t[0] = IMG_Load(M_TEX_FOLDER"dirt.png")))
@@ -106,13 +90,13 @@ void	load_textures_minecraft2(t_map *m)
 		put_error(IMG_GetError());
 	if (!(m->w_t[11] = IMG_Load(M_TEX_FOLDER"sandstone_normal.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[12] = load_image(M_TEX_FOLDER"apple_golden.png")))
+	if (!(m->w_t[12] = IMG_Load(M_TEX_FOLDER"carrot.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[13] = load_image(M_TEX_FOLDER"destroy_stage_1.png")))
+	if (!(m->w_t[13] = IMG_Load(M_TEX_FOLDER"wheat.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[14] = load_image(M_TEX_FOLDER"torch_on.png")))
+	if (!(m->w_t[14] = IMG_Load(M_TEX_FOLDER"torch_on.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[15] = load_image(M_TEX_FOLDER"cookie.png")))
+	if (!(m->w_t[15] = IMG_Load(M_TEX_FOLDER"cookie.png")))
 		put_error(IMG_GetError());
 }
 
@@ -142,11 +126,11 @@ void	load_textures_wolf(t_map *m)
 
 void	load_textures_anime(t_map *m)
 {
-	if (!(m->w_t[10] = load_image(W_TEX_FOLDER"barrel.png")))
+	if (!(m->w_t[10] = IMG_Load(W_TEX_FOLDER"barrel.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[11] = load_image(W_TEX_FOLDER"pillar.png")))
+	if (!(m->w_t[11] = IMG_Load(W_TEX_FOLDER"pillar.png")))
 		put_error(IMG_GetError());
-	if (!(m->w_t[12] = load_image(W_TEX_FOLDER"greenlight.png")))
+	if (!(m->w_t[12] = IMG_Load(W_TEX_FOLDER"greenlight.png")))
 		put_error(IMG_GetError());
 	if (!(m->w_t[13] = IMG_Load(W_TEX_FOLDER"pain.png")))
 		put_error(IMG_GetError());

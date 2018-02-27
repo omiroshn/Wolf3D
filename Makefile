@@ -18,7 +18,7 @@ SRC = $(addprefix src/, $(addsuffix .c, $(FILES)))
 OBJ = $(addprefix obj/, $(addsuffix .o, $(FILES)))
 OBJ_LIST = $(addsuffix .o, $(FILES))
 SDL_CFLAGS = $(shell sdl2-config --cflags)
-SPEED = -O3
+# SPEED = -O3
 # FLAGS = -g -Wall -Wextra -Werror
 HEADERS = -I./includes -I./libft/includes
 

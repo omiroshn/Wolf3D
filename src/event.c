@@ -12,18 +12,32 @@
 
 #include "wolf3d.h"
 
-void	scan_ws(t_map *map, double d)
+void	scan_ws(t_map *m, double d)
 {
 	double	w;
+	long	path;
+	long	path2;
 
 	w = d > 0 ? 0.25 : -0.25;
-	if (!IS_WALL(map->karta.data[(int)(map->pos.x + map->dir.x *
-		(w + d))][(int)map->pos.y - (int)(map->dir.y * w)]))
-		map->pos.x += map->dir.x * d;
-	if (!IS_WALL(map->karta.data[(int)map->pos.x -
-		(int)(map->dir.x * w)][(int)(map->pos.y + map->dir.y
-		* (w + d))]))
-		map->pos.y += map->dir.y * d;
+	path = m->karta.data[(int)(m->pos.x + m->dir.x *
+		(w + d))][(int)m->pos.y - (int)(m->dir.y * w)];
+	path2 = m->karta.data[(int)m->pos.x -
+		(int)(m->dir.x * w)][(int)(m->pos.y + m->dir.y
+		* (w + d))];
+	if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
+	{
+		if (!IS_WALL(path) && !IS_SPRITE(path))
+			m->pos.x += m->dir.x * d;
+		if (!IS_WALL(path2) && !IS_SPRITE(path2))
+			m->pos.y += m->dir.y * d;
+	}
+	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
+	{
+		if (!IS_WALL(path))
+			m->pos.x += m->dir.x * d;
+		if (!IS_WALL(path2))
+			m->pos.y += m->dir.y * d;
+	}
 }
 
 void	scan_ad(t_map *map, double alpha)
