@@ -12,80 +12,13 @@
 
 #include "wolf3d.h"
 
-void	scan_ws(t_map *m, double d)
+void	delete_sprite(t_uint *cell, t_uint type)
 {
-	double	w;
-	long	path;
-	long	path2;
-
-	w = d > 0 ? 0.25 : -0.25;
-	path = m->karta.data[(int)(m->pos.x + m->dir.x *
-		(w + d))][(int)m->pos.y - (int)(m->dir.y * w)];
-	path2 = m->karta.data[(int)m->pos.x -
-		(int)(m->dir.x * w)][(int)(m->pos.y + m->dir.y
-		* (w + d))];
-	if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
+	if (type)
 	{
-		if (!IS_WALL(path) && !IS_SPRITE(path))
-			m->pos.x += m->dir.x * d;
-		if (!IS_WALL(path2) && !IS_SPRITE(path2))
-			m->pos.y += m->dir.y * d;
+		type == 12 ? EREASE_SPRITE(*cell) : 0;
+		type == 15 ? EREASE_SPRITE(*cell) : 0;
 	}
-	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
-	{
-		if (!IS_WALL(path))
-			m->pos.x += m->dir.x * d;
-		if (!IS_WALL(path2))
-			m->pos.y += m->dir.y * d;
-	}
-}
-
-void	scan_ad(t_map *map, double alpha)
-{
-	double old_dir_x;
-	double old_plane_x;
-
-	old_dir_x = map->dir.x;
-	map->dir.x = map->dir.x * cos(alpha) - map->dir.y * sin(alpha);
-	map->dir.y = old_dir_x * sin(alpha) + map->dir.y * cos(alpha);
-	old_plane_x = map->plane.x;
-	map->plane.x = map->plane.x * cos(alpha) - map->plane.y * sin(alpha);
-	map->plane.y = old_plane_x * sin(alpha) + map->plane.y * cos(alpha);
-}
-
-void	key_down(SDL_Scancode key, t_map *map)
-{
-	key == SDL_SCANCODE_W ? map->move = 1 : 0;
-	key == SDL_SCANCODE_S ? map->move = -1 : 0;
-	key == SDL_SCANCODE_A ? map->rotate = 1 : 0;
-	key == SDL_SCANCODE_D ? map->rotate = -1 : 0;
-	key == SDL_SCANCODE_UP ? map->move = 1 : 0;
-	key == SDL_SCANCODE_DOWN ? map->move = -1 : 0;
-	key == SDL_SCANCODE_LEFT ? map->rotate = 1 : 0;
-	key == SDL_SCANCODE_RIGHT ? map->rotate = -1 : 0;
-	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.13)
-								&& (map->rot_speed = 0.07) : 0;
-	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.13)
-								&& (map->rot_speed = 0.07) : 0;
-}
-
-void	key_up(SDL_Event e, SDL_Scancode key, t_map *map)
-{
-	SDL_Window	*win;
-	static int	full_screen;
-
-	key == SDL_SCANCODE_W || key == SDL_SCANCODE_S ? map->move = 0 : 0;
-	key == SDL_SCANCODE_A || key == SDL_SCANCODE_D ? map->rotate = 0 : 0;
-	key == SDL_SCANCODE_UP || key == SDL_SCANCODE_DOWN ? map->move = 0 : 0;
-	key == SDL_SCANCODE_LEFT || key == SDL_SCANCODE_RIGHT ? map->rotate = 0 : 0;
-	key == SDL_SCANCODE_LSHIFT ? (map->mov_speed = 0.08)
-												&& (map->rot_speed = 0.05) : 0;
-	key == SDL_SCANCODE_RSHIFT ? (map->mov_speed = 0.08)
-												&& (map->rot_speed = 0.05) : 0;
-	if (key == SDL_SCANCODE_TAB)
-		full_screen && !(full_screen = 0)
-		? SDL_SetWindowFullscreen(map->window, 0) : (full_screen = 1)
-		&& SDL_SetWindowFullscreen(map->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
 void	resize_window(t_map *m, int new_width, int new_height)
@@ -111,7 +44,7 @@ int		key_function(t_map *map)
 		else if (e.type == SDL_KEYDOWN)
 			key_down(e.key.keysym.scancode, map);
 		else if (e.type == SDL_KEYUP)
-			key_up(e, e.key.keysym.scancode, map);
+			key_up(e.key.keysym.scancode, map);
 	}
 	return (1);
 }
