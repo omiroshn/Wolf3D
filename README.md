@@ -16,6 +16,11 @@ make
 ./wolf3d resourses/maps/map1.map
 ```
 
+To load minecraft map:
+```
+./wolf3d resourses/maps/map2.map
+```
+
 Some usefull buttons:
 ```
 esc - exit
