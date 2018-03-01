@@ -92,5 +92,6 @@ double			ft_map(double value, double istart,
 									double iend, double ostart, double oend);
 int				rgb_to_int(int red, int green, int blue);
 int				get_rgb_smooth(double t, int k);
+int				ft_countwords(char *str, char c);
 
 #endif

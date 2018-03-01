@@ -15,27 +15,22 @@
 void	scan_ws(t_map *m, double d)
 {
 	double	w;
-	long	path;
-	long	path2;
 
 	w = d > 0 ? 0.25 : -0.25;
-	path = m->karta.data[(int)(m->pos.x + m->dir.x *
-		(w + d))][(int)m->pos.y - (int)(m->dir.y * w)];
-	path2 = m->karta.data[(int)m->pos.x -
-		(int)(m->dir.x * w)][(int)(m->pos.y + m->dir.y
-		* (w + d))];
-	if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
-	{
-		m->pos.x += (!IS_WALL(path) && !IS_SPRITE(path)) ? m->dir.x * d : 0;
-		m->pos.y += (!IS_WALL(path2) && !IS_SPRITE(path2)) ? m->dir.y * d : 0;
-	}
+	if (!IS_WALL(m->karta.data[(int)(m->pos.x + m->dir.x *
+		(w + d))][(int)m->pos.y - (int)(m->dir.y * w)])
+		&& !IS_SPRITE(m->karta.data[(int)(m->pos.x + m->dir.x *
+			(w + d))][(int)m->pos.y - (int)(m->dir.y * w)]))
+		m->pos.x += m->dir.x * d;
+	if (!IS_WALL(m->karta.data[(int)m->pos.x - (int)(m->dir.x * w)]
+		[(int)(m->pos.y + m->dir.y * (w + d))])
+		&& !IS_SPRITE(m->karta.data[(int)m->pos.x - (int)(m->dir.x * w)]
+			[(int)(m->pos.y + m->dir.y * (w + d))]))
+		m->pos.y += m->dir.y * d;
 	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
-	{
-		m->pos.x += !IS_WALL(path) ? m->dir.x * d : 0;
-		m->pos.y += !IS_WALL(path2) ? m->dir.y * d : 0;
 		delete_sprite(&m->karta.data[(int)m->pos.x][(int)m->pos.y],
-															SPRITE(path2));
-	}
+			SPRITE(m->karta.data[(int)m->pos.x - (int)(m->dir.x * w)]
+				[(int)(m->pos.y + m->dir.y * (w + d))]));
 }
 
 void	scan_ad(t_map *map, double alpha)
@@ -68,7 +63,7 @@ void	key_down(SDL_Scancode key, t_map *m)
 	if (key == SDL_SCANCODE_SPACE && SDL_GetTicks() - m->shoot > 400)
 	{
 		m->shoot = SDL_GetTicks();
-		if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
+		if (ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
 			Mix_PlayChannel(0, m->shoot_sound, 0);
 	}
 	if (key == SDL_SCANCODE_M)

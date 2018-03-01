@@ -94,22 +94,22 @@ void	load_textures_anime(t_map *m)
 
 void	define_textures(t_map *m)
 {
-	if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
+	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
+	{
+		load_textures_minecraft(m);
+		load_textures_minecraft2(m);
+		if (!(m->weapon = IMG_Load(HUD_FOLDER"pickaxe.png")))
+			put_error(IMG_GetError());
+		if (!(m->sprite_tex = IMG_Load(W_TEX_FOLDER"barrel.png")))
+			put_error(IMG_GetError());
+	}
+	else
 	{
 		load_textures_wolf(m);
 		load_textures_anime(m);
 		if (!(m->weapon = IMG_Load(HUD_FOLDER"weapon.png")))
 			put_error(IMG_GetError());
 		if (!(m->gunfire = IMG_Load(HUD_FOLDER"fire.png")))
-			put_error(IMG_GetError());
-		if (!(m->sprite_tex = IMG_Load(W_TEX_FOLDER"barrel.png")))
-			put_error(IMG_GetError());
-	}
-	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
-	{
-		load_textures_minecraft(m);
-		load_textures_minecraft2(m);
-		if (!(m->weapon = IMG_Load(HUD_FOLDER"pickaxe.png")))
 			put_error(IMG_GetError());
 		if (!(m->sprite_tex = IMG_Load(W_TEX_FOLDER"barrel.png")))
 			put_error(IMG_GetError());

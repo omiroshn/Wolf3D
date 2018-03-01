@@ -20,11 +20,17 @@ Some usefull buttons:
 ```
 esc - exit
 WASD - moving
+Arrows - moving
 Shift + WASD - sprint
+TAB - fullscreen
 Space - shoot
+M - mute music
 ```
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Image/Screen%20Shot%202018-02-04%20at%2019.31.45.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Image/Screen%20Shot%202018-02-04%20at%2019.34.11.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Image/Screen%20Shot%202018-02-04%20at%2019.35.01.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Image/Screen%20Shot%202018-02-04%20at%2019.35.42.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Image/Screen%20Shot%202018-02-04%20at%2019.36.22.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/1.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/2.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/3.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/4.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/5.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/6.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/7.png" width="60%" />
+<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/8.png" width="60%" />

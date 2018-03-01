@@ -69,16 +69,18 @@ void	init(t_map *m)
 
 void	load_music(t_map *m)
 {
-	if (!ft_strcmp(m->name, MAPS_FOLDER"map1.map"))
+	if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
+	{
+		if (!(m->game_sound = Mix_LoadMUS(MUSIC_FOLDER"Mutation.ogg")))
+			put_error(IMG_GetError());
+	}
+	else
 	{
 		if (!(m->game_sound = Mix_LoadMUS(MUSIC_FOLDER"Wolfenstein_3D.ogg")))
 			put_error(IMG_GetError());
 		if (!(m->shoot_sound = Mix_LoadWAV(MUSIC_FOLDER"gun-gunshot-02.wav")))
 			put_error(IMG_GetError());
 	}
-	else if (!ft_strcmp(m->name, MAPS_FOLDER"map2.map"))
-		if (!(m->game_sound = Mix_LoadMUS(MUSIC_FOLDER"Mutation.ogg")))
-			put_error(IMG_GetError());
 	Mix_PlayMusic(m->game_sound, -1);
 }
 
@@ -92,7 +94,6 @@ int		main(int argc, char **argv)
 	init(&map);
 	define_textures(&map);
 	load_music(&map);
-
 	while (TRUE)
 	{
 		if (!key_function(&map))
