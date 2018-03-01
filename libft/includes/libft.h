@@ -17,6 +17,8 @@
 # include <string.h>
 # include <unistd.h>
 
+# define ABS(num)(num < 0 ? -num : num)
+
 typedef	struct	s_list
 {
 	void			*content;
