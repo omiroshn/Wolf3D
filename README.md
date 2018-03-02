@@ -39,5 +39,3 @@ M - mute music
 <img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/6.png" width="60%" />
 <img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/7.png" width="60%" />
 <img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/8.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/9.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/10.png" width="60%" />
