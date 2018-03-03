@@ -17,9 +17,16 @@
 # include <fcntl.h>
 # include <SDL2/SDL.h>
 # include "libft.h"
-# include "SDL_ttf.h"
+
+#ifdef __APPLE__
 # include "SDL_image.h"
 # include "SDL_mixer.h"
+# include "SDL_ttf.h"
+#elif __linux__
+# include <SDL2/SDL_image.h>
+# include <SDL2/SDL_mixer.h>
+# include <SDL2/SDL_ttf.h>
+#endif
 
 # define WIDTH 1280
 # define HEIGHT 1024

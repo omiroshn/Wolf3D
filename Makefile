@@ -25,7 +25,7 @@ HEADERS = -I./includes -I./libft/includes
 
 OS = $(shell uname)
 ifeq ($(OS), Linux)
-CGFLAGS = `sdl2-config --cflags --libs` -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+CGFLAGS = `sdl2-config --cflags --libs` -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
 else
 CGFLAGS = -lmlx -framework OpenGL -framework AppKit
 INCLUDES	=	-I./frameworks/SDL2.framework/Versions/A/Headers \
