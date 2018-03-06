@@ -29,7 +29,7 @@
 #endif
 
 # define WIDTH 1280
-# define HEIGHT 1024
+# define HEIGHT 1000
 # define THREADS 8
 # define TEXTURENUM 16
 # define TRUE 1
@@ -50,6 +50,7 @@
 # define W_TEX_FOLDER "resources/images/wolf/"
 # define M_TEX_FOLDER "resources/images/minecraft/"
 # define MUSIC_FOLDER "resources/sounds/"
+# define FONTS_FOLDER "resources/fonts/"
 
 typedef unsigned int	t_uint;
 
@@ -81,6 +82,7 @@ typedef	struct	s_map
 	SDL_Surface *sprite_tex;
 	SDL_Surface	*weapon;
 	SDL_Surface	*gunfire;
+	SDL_Surface *fps;
 	Mix_Music	*game_sound;
 	Mix_Chunk	*shoot_sound;
 	t_karta		karta;
@@ -204,7 +206,7 @@ void			alloc_map(t_map *m, int fd, char *lol, char **numbers);
 void			draw(t_wolf *w);
 void			threads_create(SDL_Surface *screen, t_map map);
 void			lsync(void);
-void			display_fps(void);
+void			display_fps(t_map *m);
 
 /*
 **				keys.c

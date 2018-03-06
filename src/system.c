@@ -50,18 +50,28 @@ void	lsync(void)
 	}
 }
 
-void	display_fps(void)
+void	display_fps(t_map *m)
 {
-	static unsigned int	frame_rate;
-	static unsigned int	time_current;
-	static unsigned int	time_past;
-	static unsigned int	ticks;
+	static t_uint	fps;
+	static t_uint	time_current;
+	static t_uint	time_past;
+	static t_uint	ticks;
+	TTF_Font		*ttf;
+	char			*fps_str;
 
 	time_current = time(NULL);
 	if (time_current - time_past && (time_past = time_current))
-	{
-		frame_rate = SDL_GetTicks() - ticks;
-		printf("FPS: %d\n", (int)(1000.0 / frame_rate));
-	}
+		fps = 1000 / (SDL_GetTicks() - ticks);
 	ticks = SDL_GetTicks();
+	fps_str = ft_itoa(fps);
+	if (!(ttf = TTF_OpenFont(FONTS_FOLDER"arcadeclassic.regular.ttf", 30)))
+		put_error(IMG_GetError());
+	m->fps = TTF_RenderText_Solid(ttf, fps_str,
+					(SDL_Color){255, 255, 255, 255});
+	SDL_BlitSurface(m->fps, NULL, m->screen,
+		&(SDL_Rect){ 10, 0, m->fps->w, m->fps->h});
+	TTF_CloseFont(ttf);
+	SDL_FreeSurface(m->fps);
+	ft_memdel((void**)&fps_str);
+	// 	printf("FPS: %d\n", (int)(fps));
 }

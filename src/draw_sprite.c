@@ -20,7 +20,7 @@ void	sprite_line(t_map *m, t_vec transf, t_ivec draw_se, int x)
 	tex.x = (int)(256 * (x - (-abs((int)(m->screen->h
 		/ (transf.y))) / 2 + (int)((m->screen->w / 2)
 		* (1 + transf.x / transf.y)))) * m->w_t[m->s_tex]->w
-		/ abs((int)(m->screen->h / (transf.y)))) / 256;
+		/ fabs((m->screen->h / (transf.y)))) / 256;
 	y = draw_se.y - 1;
 	m->bufp = (t_uint *)m->screen->pixels + draw_se.y * m->w + x;
 	while (++y < draw_se.x)
@@ -30,7 +30,7 @@ void	sprite_line(t_map *m, t_vec transf, t_ivec draw_se, int x)
 		if (!*m->bufp && tex.x >= 0 && tex.y >= 0 && tex.x < m->w_t
 			[m->s_tex]->w && tex.y < m->w_t[m->s_tex]->w)
 			*m->bufp = ((t_uint *)m->w_t[m->s_tex]->pixels)
-		[m->w_t[m->s_tex]->w * tex.y + tex.x] & 0xFFFFFF;
+				[m->w_t[m->s_tex]->w * tex.y + tex.x] & 0xFFFFFF;
 		m->bufp += m->w;
 	}
 }

@@ -50,18 +50,18 @@ $(NAME): libft/libft.a $(OBJ)
 	@$(CC) -o $(NAME) $(FLAGS) $(SPEED) $(OBJ) $(CGFLAGS) $(FRAMEWORKS) libft/libft.a
 	@echo "\033[32m[ ✔ ] Binary \033[1;32m$(NAME)\033[1;0m\033[32m created.\033[0m"
 libft/libft.a:
-	@make --no-print-directory -C $(LIBFT_DIR)
+	@make --no-print-directory -j3 -C $(LIBFT_DIR)
 obj/%.o: src/%.c
 	@$(CC) -o $@ $(FLAGS) $(SPEED) $(HEADERS) $(INCLUDES) -c $^
 	@echo "\033[37mCompilation of \033[97m$(notdir $<) \033[0m\033[37mdone. \033[0m"
 clean:
 	@rm -f $(OBJ)
-	@make --no-print-directory -C libft/ clean
+	@make --no-print-directory -j3 -C libft/ clean
 	@echo "\033[31m[ ✔ ] Objects files \033[91m$(OBJ_LIST) \033[0m\033[31m removed. \033[0m"
 fclean:
 	@rm -rf $(OBJ)
 	@rm -f $(NAME)
-	@make --no-print-directory -C libft/ fclean
+	@make --no-print-directory -j3 -C libft/ fclean
 	@echo "\033[31m[ ✔ ] Objects files \033[91m$(OBJ_LIST) \033[0m\033[31m removed. \033[0m"
 	@echo "\033[31m[ ✔ ] Binary \033[1;31m$(NAME) \033[1;0m\033[31mremoved.\033[0m"
 re: fclean all

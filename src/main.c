@@ -47,6 +47,8 @@ void	init(t_map *m)
 		put_error(SDL_GetError());
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
 		put_error(SDL_GetError());
+	if (TTF_Init() < 0)
+		put_error(SDL_GetError());
 	m->window = SDL_CreateWindow("Wolf3d",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
@@ -103,7 +105,7 @@ int		main(int argc, char **argv)
 		threads_create(map.screen, map);
 		draw_cursor(&map);
 		draw_weapon(&map);
-		display_fps();
+		display_fps(&map);
 		lsync();
 		SDL_UpdateWindowSurface(map.window);
 	}

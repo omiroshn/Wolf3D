@@ -81,7 +81,6 @@ HEADERS = -I./includes
 all: $(NAME)
 
 .PHONY: all clean
-.NOTPARALLEL: all $(NAME) clean fclean re 
 
 $(NAME): $(OBJ)
 	@echo "\033[36mLinking...\033[34m"
