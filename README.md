@@ -31,11 +31,11 @@ TAB - fullscreen
 Space - shoot
 M - mute music
 ```
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/1.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/2.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/3.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/4.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/5.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/6.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/7.png" width="60%" />
-<img align="left"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/8.png" width="60%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/1.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/2.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/3.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/4.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/5.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/6.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/7.png" width="100%" />
+<img align="center"  src="https://github.com/omiroshn/Wolf3dSDL/blob/master/Screenshots/8.png" width="100%" />
