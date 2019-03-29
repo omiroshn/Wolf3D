@@ -27,7 +27,7 @@ OS = $(shell uname)
 ifeq ($(OS), Linux)
 CGFLAGS = `sdl2-config --cflags --libs` -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
 else
-CGFLAGS = -lmlx -framework OpenGL -framework AppKit
+CGFLAGS = -framework OpenGL -framework AppKit
 INCLUDES	=	-I./frameworks/SDL2.framework/Versions/A/Headers \
 				-I./frameworks/SDL2_ttf.framework/Versions/A/Headers \
 				-I./frameworks/SDL2_image.framework/Versions/A/Headers \
